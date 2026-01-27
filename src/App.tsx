@@ -1,41 +1,19 @@
-import Card from "./components/Card"
-import Header from "./components/Header"
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
+import MainLayout from "./layout/MainLayout";
+import HomePage from "./pages/HomePage";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<MainLayout />}>
+      <Route index element={<HomePage />}></Route>
+    </Route>
+  )
+);
 
 const App = () => {
-  // const name: string = 'Shahriyor';
-  // const people: any[] = [
-  //   {
-  //     id: 1,
-  //     name: 'Shahriyor'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Barry'
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Pau'
-  //   },
-  //   {
-  //     id: 4,
-  //     name: 'Lance'
-  //   }
-  // ];
-  // const toggle: boolean = true;
-
   return (
     <>
-      {/* <div className="text-2xl">App</div>
-      <p>Hello, {name}!</p>
-      <ul>
-        {people.map((person) => (
-          <li key={person.id}>{ person.name }</li>
-        ))}
-      </ul>
-      { toggle && <span>Hi!</span> } */}
-
-      <Header title='Hello, World!' subtitle='How are you?' />
-      <Card child={true}/>
+      <RouterProvider router={router} />
     </>
   )
 }
