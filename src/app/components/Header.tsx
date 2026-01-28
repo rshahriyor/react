@@ -1,4 +1,4 @@
-import { FaHeart, FaUser, FaSearch } from "react-icons/fa";
+import { FaRegUser, FaSearch, FaRegHeart } from "react-icons/fa";
 import Logo from "../assets/header-logo.svg";
 import { Link } from "react-router-dom";
 
@@ -16,11 +16,11 @@ const Header = () => {
                 </div>
                 <div className="profile max-w-70 w-full flex justify-center gap-3">
                     <Link to='/u' className="flex flex-col items-center gap-px cursor-pointer">
-                        <FaUser className="text-(--text-color) text-2xl" />
+                        <FaRegUser className="text-(--text-color) text-2xl" />
                         <span className="text-(--text-color) text-sm">Аккаунт</span>
                     </Link>
                     <Link to='/m-i' className="flex flex-col items-center gap-px cursor-pointer" >
-                        <FaHeart className="text-(--text-color) text-2xl" />
+                        <FaRegHeart className="text-(--text-color) text-2xl" />
                         <span className="text-(--text-color) text-sm">Избранные</span>
                     </Link >
                 </div >
