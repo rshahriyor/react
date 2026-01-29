@@ -9,6 +9,7 @@ const Menu = ({ currentPage }: {currentPage: string}) => {
   const { data: categories } = useQuery<IResponse<{ id: number, name: string }[]>>({
     queryKey: ['categories'],
     queryFn: getCategories,
+    staleTime: 30 * 60 * 1000
   });
   const [categoryListCount, setCategoryListCount] = useState(5);
   const [isFull, setIsFull] = useState(false);

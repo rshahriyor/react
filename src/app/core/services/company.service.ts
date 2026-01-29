@@ -38,3 +38,7 @@ export function getCompaniesByFilter(filter: IFilterRequest): Promise<IResponse<
 export function getCompany(companyId: number): Promise<IResponse<ICompany>> {
     return fetch(`${API_URL}/${companyId}`).then(response => response.json());
 }
+
+export function getMyCompanies(): Promise<IResponse<ICompany[]>> {
+    return fetch(`${API_URL}/own`).then(response => response.json());
+}

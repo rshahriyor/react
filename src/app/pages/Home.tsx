@@ -18,6 +18,7 @@ const Home = () => {
   const { data: companies } = useQuery<IResponse<ICompaniesResponseForMainPage[]>>({
     queryKey: ['companies'],
     queryFn: getCompanies,
+    staleTime: 5 * 60 * 1000
   });
 
   return (
@@ -42,8 +43,8 @@ const Home = () => {
               {category.companies.map((company: ICompany) => (
                 <div key={company.id} className="max-w-70 w-full">
                   <CompanyCard companyId={company.id || 0} companyTitle={company.name || ''} companyOwn={false}
-                    companyTags={company.tags || []} companyImage={company.files?.[0]} companyStatus={company?.is_active || false}
-                    isFavorite={company.is_favorite || false} favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]}/>
+                    companyTags={company.tags || []} companyImage={company.files?.[0]} isFavorite={company.is_favorite || false} 
+                    favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]}/>
                 </div>
               ))}
             </div>

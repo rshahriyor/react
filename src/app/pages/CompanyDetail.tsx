@@ -39,7 +39,8 @@ const CompanyDetail = () => {
     select: (res) => ({
       ...res.data,
       social_media: mapSocialMediaWithIcons(res.data.social_media)
-    })
+    }),
+    staleTime: 30 * 60 * 1000
   });
 
   const imageUrl = environment.imageUrl;
