@@ -26,7 +26,7 @@ interface CompanyCardProps {
     favoritesCount: number;
     companyTags: Tag[];
     companyOwn: boolean;
-    companyStatus: boolean;
+    companyStatus?: boolean;
     companyImage?: IFile;
     schedule?: ISchedule;
 }

@@ -10,29 +10,35 @@ import { getCompaniesByFilter } from "../core/services/company.service";
 import CompanyCard from "../components/shared/CompanyCard";
 
 const CompanyFilter = () => {
+  const staleTime = 30 * 60 * 1000;
   const { data: companies } = useQuery<IResponse<ICompany[]>>({
-    queryKey: ['companies'],
-    queryFn: () => getCompaniesByFilter(filterRequest)
+    queryKey: ['companies_by_filter'],
+    queryFn: () => getCompaniesByFilter(filterRequest),
+    staleTime: 5 * 60 * 1000
   });
 
   const { data: categories } = useQuery<IResponse<{ id: number, name: string }[]>>({
     queryKey: ['categories'],
-    queryFn: getCategories
+    queryFn: getCategories,
+    staleTime
   });
 
   const { data: tags } = useQuery<IResponse<{ id: number, name: string }[]>>({
     queryKey: ['tags'],
-    queryFn: getTags
+    queryFn: getTags,
+    staleTime
   });
 
   const { data: regions } = useQuery<IResponse<{ id: number, name: string }[]>>({
     queryKey: ['regions'],
-    queryFn: getRegions
+    queryFn: getRegions,
+    staleTime
   });
 
   const { data: cities } = useQuery<IResponse<{ id: number, name: string }[]>>({
     queryKey: ['cities'],
-    queryFn: getCities
+    queryFn: getCities,
+    staleTime
   });
 
   const [filterRequest, setFilterRequest] = useState<IFilterRequest>({
@@ -183,8 +189,8 @@ const CompanyFilter = () => {
           {companies?.data.map((company) => (
             <div key={company.id} className="max-w-70 w-full">
               <CompanyCard companyId={company.id || 0} companyTitle={company.name || ''} companyOwn={false}
-                companyTags={company.tags || []} companyImage={company.files?.[0]} companyStatus={company?.is_active || false}
-                isFavorite={company.is_favorite || false} favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]} />
+                companyTags={company.tags || []} companyImage={company.files?.[0]} isFavorite={company.is_favorite || false} 
+                favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]} />
             </div>
           ))}
           {!companies?.data.length && (
