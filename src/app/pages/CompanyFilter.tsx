@@ -3,7 +3,6 @@ import Filter from "../components/shared/Filter"
 import { useState, type ChangeEvent } from "react"
 import type { IResponse } from "../core/models/response.model";
 import { getCategories, getCities, getRegions, getTags } from "../core/services/dictionary.service";
-import { FaSearch } from "react-icons/fa";
 import type { IFilterRequest } from "../core/models/filter.model";
 import type { ICompany } from "../core/models/Company";
 import { getCompaniesByFilter } from "../core/services/company.service";
@@ -101,7 +100,7 @@ const CompanyFilter = () => {
               <input onChange={(event) => toggleSelectAll(event, 'category_ids')} checked={!!categories?.data.length && filterRequest.category_ids.length === categories.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
-                <FaSearch className="absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)" />
+                <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
@@ -123,7 +122,7 @@ const CompanyFilter = () => {
               <input onChange={(event) => toggleSelectAll(event, 'tag_ids')} checked={!!tags?.data.length && filterRequest.tag_ids.length === tags.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
-                <FaSearch className="absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)" />
+                <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
@@ -145,7 +144,7 @@ const CompanyFilter = () => {
               <input onChange={(event) => toggleSelectAll(event, 'region_ids')} checked={!!regions?.data.length && filterRequest.region_ids.length === regions.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
-                <FaSearch className="absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)" />
+                <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
@@ -167,7 +166,7 @@ const CompanyFilter = () => {
               <input onChange={(event) => toggleSelectAll(event, 'city_ids')} checked={!!cities?.data.length && filterRequest.city_ids.length === cities.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
-                <FaSearch className="absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)" />
+                <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">

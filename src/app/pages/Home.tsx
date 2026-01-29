@@ -3,7 +3,6 @@ import MainBanner from "../assets/main-banner.png";
 import RightSideImage from "../assets/right-side-main-image.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "../core/services/company.service";
-import { FaArrowRight } from "react-icons/fa";
 import type { ICompaniesResponseForMainPage, ICompany } from "../core/models/Company";
 import type { IResponse } from "../core/models/response.model";
 import CompanyCard from "../components/shared/CompanyCard";
@@ -64,7 +63,7 @@ const TitleTemp = ({ name, id }: TitleTempProps) => {
       <Link to={`/m-i/?category_ids=${id}`}
         className="flex justify-center items-center cursor-pointer gap-1.75 max-w-25 w-full h-11.5 py-2.5 px-2.75 rounded-[18px] bg-white border border-[#ECEEEF] duration-300">
         <span className="view-all-label">Еще</span>
-        <FaArrowRight />
+        <i className="pi pi-arrow-right"></i>
       </Link >
     </div >
   );

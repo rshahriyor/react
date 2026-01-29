@@ -2,7 +2,6 @@ import { useEffect, useState, type MouseEvent } from 'react'
 import { NavLink } from 'react-router-dom'
 import type { IFile } from '../../core/models/Company';
 import { environment } from '../../../environments/environment';
-import { FaRegClock, FaHeart, FaRegHeart } from 'react-icons/fa';
 
 interface Tag {
     tag_name: string
@@ -123,7 +122,7 @@ const CompanyCard = ({
                 {!companyOwn ? (
                     <div className={`absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full 
                                     ${isWorking ? 'bg-[#00D7AC]' : atLunch ? 'bg-[#FFDC3F]' : isClosed ? 'bg-[#FF8282]' : ''}`}>
-                        <FaRegClock className="pi pi-clock text-sm text-white" />
+                        <i className="pi pi-clock text-sm text-white"></i>
                     </div>
                 ) : (
                     /* OWNER MENU */
@@ -186,11 +185,7 @@ const CompanyCard = ({
                             eventsClick(e)
                             toggleFavoriteCard()
                         }}>
-                        {!isFavorite ? (
-                            <FaRegHeart className={`text-xl text-[#FF7676]`} />
-                        ) : (
-                            <FaHeart className={`text-xl text-[#FF7676]`} />
-                        )}
+                        <i className={`${isFavorite ? 'pi pi-heart' : 'pi pi-heart-fill'} text-xl text-[#FF7676]`}></i>
                         <span className="text-[18px] text-[#FF7676]">
                             {favoritesCount}
                         </span>

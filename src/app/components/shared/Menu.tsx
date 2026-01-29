@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { FaAngleDown } from "react-icons/fa";
 import { getCategories } from "../../core/services/dictionary.service";
 import type { IResponse } from "../../core/models/response.model";
 import { NavLink } from "react-router-dom";
 
 const Menu = ({ currentPage }: {currentPage: string}) => {
-  const { data: categories } = useQuery<IResponse<{ id: number, name: string }[]>>({
+  const { data: categories } = useQuery<IResponse<{ id: number, name: string, icon: string }[]>>({
     queryKey: ['categories'],
     queryFn: getCategories,
     staleTime: 30 * 60 * 1000
@@ -38,11 +37,12 @@ const Menu = ({ currentPage }: {currentPage: string}) => {
              text-[16px] font-semibold text-black
              transition duration-200
              hover:bg-(--bg-color)/80 hover:text-white cursor-pointer">
+              <i className={`${category.icon} text-2xl`}></i>
             {category.name}
           </NavLink>
         ))}
         <button onClick={toggleFull} className="flex items-center gap-2 w-full min-h-12.5 bg-white border-b border-[#EAEAEA] px-4 py-3 text-left break-all text-[16px] font-semibold text-black transition duration-200 hover:bg-(--bg-color)/80 hover:text-white cursor-pointer show-more">
-          <FaAngleDown className={`text-2xl duration-200 ${isFull && 'rotate-180'}`} />
+          <i className={`pi pi-angle-down text-2xl duration-200 ${isFull && 'rotate-180'}`}></i>
           {isFull ? 'Меньше' : 'Еще'}
         </button>
       </div>

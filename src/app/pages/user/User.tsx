@@ -1,17 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaRegBuilding, FaRegUser } from 'react-icons/fa';
 
 const User = () => {
     const menuItems = [
         {
             label: 'My Companies',
             route: 'm-c',
-            icon: FaRegBuilding
+            icon: 'pi pi-building'
         },
         {
             label: 'Profile',
             route: 'p',
-            icon: FaRegUser
+            icon: 'pi pi-user'
         }
     ];
     return (
@@ -25,7 +24,7 @@ const User = () => {
                                 text-[16px] font-semibold transition duration-200 cursor-pointer
                                 hover:bg-(--bg-color)/80 hover:text-white
                                 ${isActive ? 'text-white bg-(--bg-color)' : 'text-black bg-white'}`}>
-                                <menuItem.icon className="text-lg" />
+                                <i className={`${menuItem.icon} text-lg`}></i>
                                 {menuItem.label}
                             </NavLink>
                         ))}
