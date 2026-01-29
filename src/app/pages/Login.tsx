@@ -1,6 +1,107 @@
+import { Link, Navigate, Router, useNavigate } from "react-router-dom"
+import Logo from "../assets/footer-logo.svg"
+import { FaRegUser, FaLock } from "react-icons/fa"
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { login as loginform } from "../core/services/login.service";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+
+interface LoginForm {
+  username: string;
+  password: string;
+}
+
 const Login = () => {
+  const [isWrongCredentials, setIsWrongCredentials] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: loginform,
+    onSuccess: (response) => {
+      if (response.status.code === -3) {
+        setIsWrongCredentials(true);
+      } else if (response.status.code === 0) {
+        localStorage.setItem('token', response.data.token);
+        setIsWrongCredentials(false);
+        navigate('/');
+      }
+    }
+  });
+
+  const onSubmit: SubmitHandler<LoginForm> = (data) => {
+    mutation.mutate(data);
+  };
+
   return (
-    <div>Login</div>
+    <div className="flex flex-col min-h-screen w-full pt-15.5 gap-28.25 bg-[linear-gradient(116.82deg,#1482FF_0%,#CD1CFF_100%)]">
+
+      <Link to='/' className="flex justify-center items-center cursor-pointer" >
+        <img src={Logo} alt="logo" />
+      </Link>
+
+      <div className="flex justify-center items-center">
+        <form className="w-full max-w-105" onSubmit={handleSubmit(onSubmit)}>
+
+          <h2 className="text-white text-center text-[28px] my-0">
+            Вход
+          </h2>
+
+          <div className="flex flex-col mt-6.5">
+            <label className="text-white text-[20px] font-semibold">
+              Логин
+            </label>
+
+            <div className="relative mt-2">
+              <input {...register('username', {
+                required: 'Логин обязателен',
+                minLength: 4
+              })} id="login" type="text" placeholder="Введите логин"
+                className="w-full max-w-105 h-13.75
+                     pl-14.5 pr-4 py-3.5
+                     rounded-2xl outline-none
+                     bg-white/40 text-white text-[16px]
+                     placeholder-white/70 placeholder:font-semibold" />
+              <FaRegUser className="text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70" />
+            </div>
+            {errors.username && (
+              <span className="text-orange-400">{errors.username.message}</span>
+            )}
+          </div>
+
+          <div className="flex flex-col mt-6.5">
+            <label className="text-white text-[20px] font-semibold">
+              Пароль
+            </label>
+
+            <div className="relative mt-2">
+              <input {...register('password', {
+                required: 'Пароль обязателен',
+                minLength: 4
+              })} id="password" type="password" placeholder="Введите пароль"
+                className="w-full max-w-105 h-13.75 pl-14.5 pr-4 py-3.5 rounded-2xl outline-none bg-white/40 text-white text-[16px] placeholder-white/70 placeholder:font-semibold" />
+              <FaLock className="text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70" />
+            </div>
+            {errors.password && (
+              <span className="text-orange-400">{errors.password.message}</span>
+            )}
+
+            {isWrongCredentials && (
+              <span className="flex items-center gap-2.5 mt-2.75 text-orange-400 text-sm">
+                <i className="pi pi-exclamation-circle"></i>
+                Неверное имя пользователя или пароль
+              </span>
+            )}
+          </div>
+
+          <div className="relative mt-6.5">
+            <button type="submit" disabled={false} className="cursor-pointer w-full max-w-105 h-13.75 rounded-2xl bg-white text-[#6600FF] text-[23px] font-medium transition disabled:cursor-not-allowed disabled:bg-white/80">
+              Войти
+            </button>
+          </div>
+        </form>
+      </div >
+    </div >
   )
 }
 
