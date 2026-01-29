@@ -1,19 +1,24 @@
-import { Link, Navigate, Router, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Logo from "../assets/footer-logo.svg"
-import { FaRegUser, FaLock } from "react-icons/fa"
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { login as loginform } from "../core/services/login.service";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface LoginForm {
-  username: string;
-  password: string;
-}
+const schema = z.object({
+  username: z.string().min(4, 'Логин должен содержать минимум 4 символа'),
+  password: z.string().min(4, 'Пароль должен содержать минимум 4 символа'),
+});
+
+type LoginForm = z.infer<typeof schema>;
 
 const Login = () => {
   const [isWrongCredentials, setIsWrongCredentials] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+    resolver: zodResolver(schema),
+  });
   const navigate = useNavigate();
 
   const mutation = useMutation({
@@ -53,16 +58,13 @@ const Login = () => {
             </label>
 
             <div className="relative mt-2">
-              <input {...register('username', {
-                required: 'Логин обязателен',
-                minLength: 4
-              })} id="login" type="text" placeholder="Введите логин"
+              <input {...register('username')} id="login" type="text" placeholder="Введите логин"
                 className="w-full max-w-105 h-13.75
                      pl-14.5 pr-4 py-3.5
                      rounded-2xl outline-none
                      bg-white/40 text-white text-[16px]
                      placeholder-white/70 placeholder:font-semibold" />
-              <FaRegUser className="text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70" />
+              <i className="pi pi-user text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70"></i>
             </div>
             {errors.username && (
               <span className="text-orange-400">{errors.username.message}</span>
@@ -75,12 +77,9 @@ const Login = () => {
             </label>
 
             <div className="relative mt-2">
-              <input {...register('password', {
-                required: 'Пароль обязателен',
-                minLength: 4
-              })} id="password" type="password" placeholder="Введите пароль"
+              <input {...register('password')} id="password" type="password" placeholder="Введите пароль"
                 className="w-full max-w-105 h-13.75 pl-14.5 pr-4 py-3.5 rounded-2xl outline-none bg-white/40 text-white text-[16px] placeholder-white/70 placeholder:font-semibold" />
-              <FaLock className="text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70" />
+              <i className="pi pi-lock text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70"></i>
             </div>
             {errors.password && (
               <span className="text-orange-400">{errors.password.message}</span>

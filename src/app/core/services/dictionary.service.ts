@@ -3,7 +3,7 @@ import type { IResponse } from "../models/response.model";
 
 const API_URL = `${environment.apiUrl}`;
 
-export function getCategories(): Promise<IResponse<{id: number, name: string}[]>> {
+export function getCategories(): Promise<IResponse<{id: number, name: string, icon: string}[]>> {
     return fetch(`${API_URL}/categories`).then(response => response.json());
 }
 

@@ -12,7 +12,6 @@ import Facebook from "../assets/social/facebook.svg";
 import WhatsApp from "../assets/social/whatsapp.svg";
 import { useMemo, useState } from "react";
 import type { WheelEvent } from "react";
-import { FaExpand, FaTimes } from "react-icons/fa";
 
 const socialMediaIconsById: Record<number, { url: string, icon: string }> = {
   1: { url: 'https://instagram.com', icon: Instagram },
@@ -168,7 +167,7 @@ const CompanyDetail = () => {
 
                 <button onClick={() => expandImageToView(mainImagePath)} className="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
                        transition-transform duration-300 hover:scale-110 cursor-pointer">
-                  <FaExpand className="text-lg" />
+                  <i className="pi pi-expand text-lg"></i>
                 </button>
               </div>
             </div>
@@ -302,8 +301,8 @@ const CompanyDetail = () => {
         <div onClick={closeExpandedImage} className="w-screen h-screen bg-[#000000de] fixed top-0 left-0 z-9999 flex justify-center items-center">
           <img src={expandedImageSrc} alt="expanded-image" className="w-fit h-[98vh] object-contain"
             onClick={(evt) => changeExpandedImage(evt)} onWheel={(evt) => onMainImageScroll(evt)} />
-          <div className="flex justify-center items-center h-7.75 w-7.75 absolute top-2.5 right-2.5 cursor-pointer bg-[#FFFFFFB2] rounded-xl border-0 transition-transform duration-300 hover:scale-110">
-            <FaTimes className="text-(--text-color)" onClick={closeExpandedImage} />
+          <div onClick={closeExpandedImage} className="flex justify-center items-center h-7.75 w-7.75 absolute top-2.5 right-2.5 cursor-pointer bg-[#FFFFFFB2] rounded-xl border-0 transition-transform duration-300 hover:scale-110">
+            <i className="pi pi-times text-(--text-color)"></i>
           </div>
         </div>
       )}
