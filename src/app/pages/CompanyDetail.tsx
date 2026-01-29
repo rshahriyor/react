@@ -10,12 +10,15 @@ import Instagram from "../assets/social/instagram.svg";
 import Telegram from "../assets/social/telegram.svg";
 import Facebook from "../assets/social/facebook.svg";
 import WhatsApp from "../assets/social/whatsapp.svg";
+import { useMemo, useState } from "react";
+import type { WheelEvent } from "react";
+import { FaExpand, FaTimes } from "react-icons/fa";
 
-const socialMediaIconsById: Record<number, {url: string, icon: string}> = {
-  1: {url: 'https://instagram.com', icon: Instagram},
-  2: {url: 'https://t.me', icon: Telegram},
-  3: {url: 'https://wa.me', icon: WhatsApp},
-  4: {url: 'https://facebook.com', icon: Facebook}
+const socialMediaIconsById: Record<number, { url: string, icon: string }> = {
+  1: { url: 'https://instagram.com', icon: Instagram },
+  2: { url: 'https://t.me', icon: Telegram },
+  3: { url: 'https://wa.me', icon: WhatsApp },
+  4: { url: 'https://facebook.com', icon: Facebook }
 };
 
 const mapSocialMediaWithIcons = (socialMedia: any[] = []) => {
@@ -41,6 +44,94 @@ const CompanyDetail = () => {
 
   const imageUrl = environment.imageUrl;
 
+  const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
+  const [expandedImageSrc, setExpandedImageSrc] = useState('');
+  const [expandImage, setExpandImage] = useState(false);
+  const [expandImageIndex, setExpandImageIndex] = useState(0);
+  const [isMainImageScrolling, setIsMainImageScrolling] = useState(false);
+
+  const mainImagePath = useMemo(() => {
+    const files = company?.files ?? []
+    const selectedId = selectedImageId
+
+    if (files.length === 0) return null
+
+    const file = selectedId
+      ? files.find(img => img.id === selectedId)
+      : files[0]
+
+    return file?.file_name ?? null
+  }, [company?.files, selectedImageId]);
+
+  const expandImageToView = (imagePath: string | null) => {
+    setExpandedImageSrc(`${imageUrl}/${imagePath}`);
+    setExpandImage(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  const onMainImageScroll = (event: WheelEvent) => {
+    if (isMainImageScrolling) return;
+
+    setIsMainImageScrolling(true);
+
+    if (event.deltaY < 0) {
+      moveImageLeft();
+    } else {
+      moveImageRight();
+    }
+
+    setTimeout(() => setIsMainImageScrolling(false), 300);
+  }
+
+  const swapMainImage = (imageId: number | null, index: number) => {
+    setSelectedImageId(imageId)
+    setExpandImageIndex(index);
+  }
+
+  const closeExpandedImage = () => {
+    document.body.style.overflow = 'auto';
+    setExpandImage(false);
+  }
+
+  const changeExpandedImage = (evt: React.MouseEvent<HTMLImageElement>) => {
+    evt.stopPropagation();
+
+    const { clientWidth } = evt.currentTarget;
+    const middle = clientWidth / 2;
+  
+    const isLeft = evt.nativeEvent.offsetX < middle;
+  
+    if (isLeft) {
+      moveImageLeft();
+    } else {
+      moveImageRight();
+    }
+  };
+
+  function moveImageLeft() {
+    const images = company?.files || [];
+    setExpandImageIndex(prevIndex => {
+      const nextIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
+
+      setExpandedImageSrc(`${imageUrl}/${images[nextIndex].file_name}`);
+
+      return nextIndex;
+    });
+    setSelectedImageId(images[expandImageIndex].id ?? null);
+  }
+
+  function moveImageRight() {
+    const images = company?.files || [];
+    setExpandImageIndex(prevIndex => {
+      const nextIndex = prevIndex + 1 < images.length ? prevIndex + 1 : 0;
+
+      setExpandedImageSrc(`${imageUrl}/${images[nextIndex].file_name}`);
+
+      return nextIndex;
+    });
+    setSelectedImageId(images[expandImageIndex].id ?? null);
+  }
+
   return (
     <>
       <div className="border border-x-0 border-(--text-color)/40 w-full py-2 mb-5">
@@ -60,30 +151,30 @@ const CompanyDetail = () => {
               </h1>
             </div>
 
-            {/* <div className="relative max-h-82.5">
-              <img src={`${imageUrl}/${mainImagePath()}`} onClick={expandImageToView(mainImagePath())} onWheel={onMainImageScroll($event)}
-                className="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
+            <div className="relative max-h-82.5">
+              <img src={`${imageUrl}/${mainImagePath}`} onClick={() => expandImageToView(mainImagePath)} onWheel={onMainImageScroll}
+                className="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]" />
 
-                <div className="absolute top-3 w-full px-2.5 flex justify-between items-center">
-                  <div className="flex items-center gap-1 rounded-full p-1.5"> [ngClass]="{'bg-[#00D7AC]': isWorking(), 'bg-[#FFDC3F]': atLunch(), 'bg-[#FF8282]': isClosed() }"
-                    <div className="flex items-center justify-center">
-                      <i className="pi pi-clock text-white text-sm"></i>
-                    </div>
-                    <span className="text-[17px] text-white leading-none">
+              <div className="absolute top-3 w-full px-2.5 flex justify-end items-center">
+                {/* <div className="flex items-center gap-1 rounded-full p-1.5">
+                  <div className="flex items-center justify-center">
+                    <FaRegClock className="text-white text-sm" />
+                  </div>
+                  <span className="text-[17px] text-white leading-none">
                       {{ workingStatusLabel }}
                     </span>
-                  </div>
+                </div> */}
 
-                  <button onClick={expandImageToView(mainImagePath())} className="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
+                <button onClick={() => expandImageToView(mainImagePath)} className="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
                        transition-transform duration-300 hover:scale-110 cursor-pointer">
-                    <i className="pi pi-expand text-lg"></i>
-                  </button>
-                </div>
-            </div> */}
+                  <FaExpand className="text-lg" />
+                </button>
+              </div>
+            </div>
 
-            <div className="flex gap-6 overflow-x-auto"> {/* onWheel={onMouseWheel($event)} */}
+            <div className="flex gap-6 overflow-x-auto">
               {company?.files?.map((image, index) => (
-                <img key={index} src={`${imageUrl}/${image.file_name}`} className="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover min-w-45 max-w-45 h-25.25 rounded-[15px]" />
+                <img onClick={() => swapMainImage(image.id || null, index)} key={index} src={`${imageUrl}/${image.file_name}`} className="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover min-w-45 max-w-45 h-25.25 rounded-[15px]" />
               ))}
             </div>
 
@@ -205,6 +296,16 @@ const CompanyDetail = () => {
           </div >
         </div >
       </div >
+
+      {expandImage && (
+        <div onClick={closeExpandedImage} className="w-screen h-screen bg-[#000000de] fixed top-0 left-0 z-9999 flex justify-center items-center">
+          <img src={expandedImageSrc} alt="expanded-image" className="w-fit h-[98vh] object-contain"
+            onClick={(evt) => changeExpandedImage(evt)} onWheel={(evt) => onMainImageScroll(evt)} />
+          <div className="flex justify-center items-center h-7.75 w-7.75 absolute top-2.5 right-2.5 cursor-pointer bg-[#FFFFFFB2] rounded-xl border-0 transition-transform duration-300 hover:scale-110">
+            <FaTimes className="text-(--text-color)" onClick={closeExpandedImage} />
+          </div>
+        </div>
+      )}
     </>
   );
 };
