@@ -2,28 +2,14 @@ import { useEffect, useState, type MouseEvent } from 'react'
 import { NavLink } from 'react-router-dom'
 import type { IFile } from '../../core/models/Company';
 import { environment } from '../../../environments/environment';
-
-interface Tag {
-    tag_name: string
-}
-
-interface ISchedule {
-    day_of_week?: number,
-    start_at?: string,
-    end_at?: string,
-    lunch_start_at?: string,
-    lunch_end_at?: string,
-    is_working_day?: boolean,
-    is_day_and_night?: boolean,
-    without_breaks?: boolean
-}
+import type { ISchedule } from '../../core/models/schedule.model';
 
 interface CompanyCardProps {
     companyId: number;
     companyTitle: string;
     isFavorite: boolean;
     favoritesCount: number;
-    companyTags: Tag[];
+    companyTags: {tag_name: string}[];
     companyOwn: boolean;
     companyStatus?: boolean;
     companyImage?: IFile;
@@ -110,7 +96,6 @@ const CompanyCard = ({
         <NavLink
             to={`/m/${companyId}`}
             className="flex h-full cursor-pointer flex-col gap-1.5 rounded-[18px] bg-white p-3.75 max-sm:flex-row max-sm:max-h-36 max-sm:px-2.5 max-sm:py-2.75">
-            {/* IMAGE */}
             <div className="relative h-44.75 w-full max-sm:max-w-46.25 max-sm:h-full">
                 {companyImage && (
                     <img className="h-44.75 w-full rounded-2xl border border-[#D0D0D0] object-cover"
@@ -118,14 +103,12 @@ const CompanyCard = ({
                         alt={companyTitle} />
                 )}
 
-                {/* STATUS ICON */}
                 {!companyOwn ? (
                     <div className={`absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full 
                                     ${isWorking ? 'bg-[#00D7AC]' : atLunch ? 'bg-[#FFDC3F]' : isClosed ? 'bg-[#FF8282]' : ''}`}>
                         <i className="pi pi-clock text-sm text-white"></i>
                     </div>
                 ) : (
-                    /* OWNER MENU */
                     <div className="absolute right-2 top-2">
                         <div className="relative flex justify-end">
                             <i className="pi pi-ellipsis-v rounded-full bg-white p-1.5 duration-200"
@@ -161,7 +144,6 @@ const CompanyCard = ({
                 )}
             </div>
 
-            {/* CONTENT */}
             <div className="flex h-full w-full flex-col justify-between gap-3 max-sm:gap-1.5">
                 <div className="flex flex-col gap-1.5">
                     <h3 className="line-clamp-2 text-[24px] font-bold text-(--bg-color) max-sm:text-[20px]">
@@ -178,14 +160,13 @@ const CompanyCard = ({
                     </div>
                 </div>
 
-                {/* FAVORITES */}
                 {favoritesCount >= 0 && (
-                    <div className="flex items-center gap-1.25"
+                    <div className="flex items-center gap-1.25 w-fit"
                         onClick={(e) => {
-                            eventsClick(e)
+                            eventsClick(e);
                             toggleFavoriteCard()
                         }}>
-                        <i className={`${isFavorite ? 'pi pi-heart' : 'pi pi-heart-fill'} text-xl text-[#FF7676]`}></i>
+                        <i className={`${isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'} text-xl text-[#FF7676]`}></i>
                         <span className="text-[18px] text-[#FF7676]">
                             {favoritesCount}
                         </span>

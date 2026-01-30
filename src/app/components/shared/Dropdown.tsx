@@ -3,10 +3,11 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 export type DropdownOption = {
     name: string;
     id?: number;
-    value?: boolean;
+    value?: string;
+    type?: boolean;
 };
 
-type DropdownKey = 'name' | 'id' | 'value';
+type DropdownKey = 'name' | 'id' | 'value' | 'type';
 
 type Props = {
     options: DropdownOption[];
