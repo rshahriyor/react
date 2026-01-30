@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   username: z.string().min(4, 'Логин должен содержать минимум 4 символа'),
-  password: z.string().min(4, 'Пароль должен содержать минимум 4 символа'),
+  password: z.string().min(4, 'Пароль должен содержать минимум 4 символа')
 });
 
 type LoginForm = z.infer<typeof schema>;
