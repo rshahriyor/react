@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type DropdownOption = {
     name: string;
@@ -16,8 +16,6 @@ type Props = {
     optionLabel?: DropdownKey;
     optionValue?: DropdownKey;
     showFilter?: boolean;
-    labelStyle?: CSSProperties;
-    dropdownStyle?: CSSProperties;
     optionIcon?: boolean;
 };
 
@@ -28,8 +26,6 @@ const Dropdown = ({
     optionLabel = 'name',
     optionValue = 'id',
     showFilter,
-    labelStyle,
-    dropdownStyle,
     optionIcon
 }: Props) => {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -64,9 +60,8 @@ const Dropdown = ({
     return (
         <div className="relative" ref={containerRef}>
             <div className="liquid-glass-input cursor-pointer flex relative justify-between items-center"
-                style={dropdownStyle}
                 onClick={() => setMenuVisible(v => !v)}>
-                <span className="text-(--text-color) font-medium" style={labelStyle}>
+                <span className="text-(--text-color) font-medium">
                     {selectedOption?.[optionLabel] ?? ''}
                 </span>
 
@@ -79,7 +74,7 @@ const Dropdown = ({
                         <div className="flex py-3.75 px-5 gap-3.75 border-b border-[#f1efef]">
                             <div className="relative w-full">
                                 <input type="text"
-                                    className="dropdown-search-input w-full bg-(--body-bg-color) outline-none h-12 px-5 rounded-md"
+                                    className="dropdown-search-input w-full bg-(--body-bg-color) outline-none h-12 px-5 rounded-2xl"
                                     value={search}
                                     onChange={e => setSearch(e.target.value)} />
                                 <i className="pi pi-search absolute right-2.5 top-1/2 -translate-y-1/2" />

@@ -194,7 +194,7 @@ const CompanyDetail = () => {
 
               <div className="flex flex-wrap gap-6.25 justify-center mt-3">
                 <a href={'tel:+992' + company?.phone_number}
-                  className="flex items-center justify-center gap-3 bg-[#5B42FF] text-white font-semibold text-[19px] h-12 max-w-65.5 w-full rounded-lg">
+                  className="flex items-center justify-center gap-3 bg-[#5B42FF] text-white font-semibold text-[19px] h-12 max-w-65.5 w-full rounded-2xl">
                   <i className="pi pi-phone"></i>
                   +992 {formatPhone(company?.phone_number)}
                 </a>
@@ -204,19 +204,19 @@ const CompanyDetail = () => {
             <div className="bg-white p-3.75 rounded-[18px]">
               <p className="text-[27px] text-(--text-color) font-semibold my-0">Адрес:</p>
 
-              <div className="bg-[#F3F3F3] rounded-lg mt-4 text-[18px]">
+              <div className="bg-[#F3F3F3] rounded-2xl mt-4 text-[18px]">
                 <span className="block p-[8px_10px] break-all">
                   {`${company?.region_name}, ${company?.city_name}, ${company?.address}`}
                 </span>
               </div>
 
               <div className="relative mt-4">
-                <img src={Map} className="w-full max-w-137.5" />
+                <img src={Map} className="w-full max-w-137.5 rounded-2xl" />
                 <a href={'https://www.google.com/maps?q=' + company?.latitude + ',' + company?.longitude}
                   target="_blank" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                   bg-[#5B42FF] hover:bg-[#4f34fc]
                   text-white text-[19px] font-semibold
-                  rounded-lg w-full max-w-52.5
+                  rounded-2xl w-full max-w-52.5
                                 py-3 shadow transition text-center" >
                   Показать на карте
                 </a>
@@ -233,17 +233,17 @@ const CompanyDetail = () => {
                   <div key={index} className="flex justify-between items-center max-w-64.25 w-full">
                     <span>{dayOfWeek(schedule?.day_of_week)}</span>
                     {schedule.is_day_and_night && (
-                      <div className="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
+                      <div className="bg-(--body-bg-color) rounded-2xl h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
                         Круглосуточно
                       </div>
                     )}
                     {!schedule.is_working_day && (
-                      <div className="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
+                      <div className="bg-(--body-bg-color) rounded-2xl h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
                         Выходной
                       </div>
                     )}
                     {!schedule.is_day_and_night && schedule.is_working_day && (
-                      <div className="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
+                      <div className="bg-(--body-bg-color) rounded-2xl h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
                         {schedule?.start_at} - {schedule?.end_at}
                       </div>
                     )}
@@ -254,13 +254,13 @@ const CompanyDetail = () => {
                   <div className="flex justify-between items-center max-w-64.25 w-full">
                     <span>Обед:</span>
                     {company?.schedules[0]?.without_breaks ? (
-                      <div className="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5
+                      <div className="bg-(--body-bg-color) rounded-2xl h-11 w-full max-w-32.5
                                           flex items-center justify-center text-[15px]">
                         Без перерыва
                       </div>
 
                     ) : (
-                      <div className="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5
+                      <div className="bg-(--body-bg-color) rounded-2xl h-11 w-full max-w-32.5
                                 flex items-center justify-center text-[15px]">
                         {company?.schedules[0]?.lunch_start_at}
                         -

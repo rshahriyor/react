@@ -1,7 +1,7 @@
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import Dropdown from "../../components/shared/Dropdown";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getCategories, getCities, getRegions } from "../../core/services/dictionary.service";
+import { getCategories, getCities, getRegions, getTagsByCategory } from "../../core/services/dictionary.service";
 import { WEEK_DAYS } from "../../core/utils/constants";
 import { getTimeSlots } from "../../core/utils/helper";
 import type { ICompanyForm } from "../../core/models/company-form.model";
@@ -10,6 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { ISchedule } from "../../core/models/schedule.model";
 import { useRef, useState } from "react";
 import { uploadFile } from "../../core/services/files.service";
+import MultiSelect from "../../components/shared/Multiselect";
+import { postCompany } from "../../core/services/company.service";
+import { useNavigate } from "react-router-dom";
 
 const socialMediaList = [
   {
@@ -60,6 +63,7 @@ const company_schedule = (schedules: ISchedule[], lunch_start_at: string, lunch_
 const schema = z.object({
   name: z.string(),
   category_id: z.number(),
+  tag_id: z.array(z.number()),
   phone_number: z.string(),
   region_id: z.number(),
   city_id: z.number(),
@@ -84,6 +88,7 @@ const schema = z.object({
 type CompanyFormData = z.infer<typeof schema>;
 
 const CompanyForm = () => {
+  const navigate = useNavigate();
   const { control, register, watch, handleSubmit, setValue } =
     useForm<CompanyFormData>({
       resolver: zodResolver(schema),
@@ -114,6 +119,12 @@ const CompanyForm = () => {
     queryFn: getCategories
   });
 
+  const { data: tags } = useQuery({
+    queryKey: ['tags', watch('category_id')],
+    queryFn: () => getTagsByCategory(watch('category_id')),
+    enabled: !!watch('category_id'),
+  });
+
   const { data: regions } = useQuery({
     queryKey: ['regions'],
     queryFn: getRegions
@@ -137,15 +148,25 @@ const CompanyForm = () => {
   const scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...timeSlots];
   const lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...timeSlots];
 
+  const companyMutation = useMutation({
+    mutationFn: postCompany,
+    onSuccess: (res) => {
+      if (res.status.code === 0) {
+        navigate('/u/m-c');
+      }
+    }
+  });
+
   const onSubmit: SubmitHandler<ICompanyForm> = (data) => {
     const social_media = data.social_media.filter((sm) => sm.social_media_id && sm.account_url);
     const file_ids = imageList.filter(img => img.url).map(img => img.id);
     const { lunch_start_at, lunch_end_at, ...payload } = data;
 
     payload.social_media = social_media;
-    payload.schedules = company_schedule( data.schedules, lunch_start_at, lunch_end_at );
+    payload.schedules = company_schedule(data.schedules, lunch_start_at ?? '', lunch_end_at ?? '');
     payload.file_ids = file_ids;
 
+    companyMutation.mutate(payload);
     console.log(payload);
   };
 
@@ -160,20 +181,20 @@ const CompanyForm = () => {
     }
   });
   
-  const onFileSelected = ( e: React.ChangeEvent<HTMLInputElement>, index: number ) => {
+  const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const formData = new FormData();
       formData.append('files', file);
-      
+
       fileMutation.mutate({
         formData, index, preview: reader.result as string
       });
     };
-    
+
     reader.readAsDataURL(file);
   };
 
@@ -207,6 +228,18 @@ const CompanyForm = () => {
             showFilter />
         </div>
 
+        {watch('category_id') && (
+          <div className="flex flex-col gap-1">
+            <span className="w-fit relative text-lg mb-0.75 required font-semibold text-(--text-color)">Теги</span>
+            <MultiSelect options={tags?.data || []}
+              value={watch('tag_id')}
+              onChange={v => setValue('tag_id', v)}
+              optionLabel="name"
+              optionValue="id"
+              showFilter />
+          </div>
+        )}
+
         <label className="flex flex-col gap-1">
           <span className="w-fit relative text-lg mb-0.75 required font-semibold text-(--text-color)">Укажите номер телефона</span>
           <div className="flex gap-5">
@@ -228,7 +261,7 @@ const CompanyForm = () => {
                   </div>
                 )}
 
-                <div className={`w-45 h-27.5 bg-white rounded-2xl ${ !img.url && 'cursor-pointer'} flex justify-center items-center overflow-hidden`}
+                <div className={`w-45 h-27.5 bg-white rounded-2xl ${!img.url && 'cursor-pointer'} flex justify-center items-center overflow-hidden`}
                   onClick={() => !img.url && triggerFileInput(index)}>
                   {img.url ? (
                     <img src={img.url} className="w-full h-full object-cover" />

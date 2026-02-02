@@ -31,8 +31,7 @@ const TitleTemp = ({ name, id }: TitleTempProps) => {
 const Home = () => {
   const { data: companies } = useQuery<IResponse<ICompaniesResponseForMainPage[]>>({
     queryKey: ['companies'],
-    queryFn: getCompanies,
-    staleTime: 60 * 1000
+    queryFn: getCompanies
   });
 
   return (
