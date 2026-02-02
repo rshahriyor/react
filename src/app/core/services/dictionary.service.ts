@@ -1,20 +1,18 @@
-import { environment } from "../../../environments/environment";
 import type { IResponse } from "../models/response.model";
-
-const API_URL = `${environment.apiUrl}`;
+import { api } from "./api.service";
 
 export function getCategories(): Promise<IResponse<{id: number, name: string, icon: string}[]>> {
-    return fetch(`${API_URL}/categories`).then(response => response.json());
+    return api.request<IResponse<{id: number, name: string, icon: string}[]>>('categories');
 }
 
 export function getTags(): Promise<IResponse<{id: number, name: string}[]>> {
-    return fetch(`${API_URL}/tags`).then(response => response.json());
+    return api.request<IResponse<{id: number, name: string}[]>>('tags');
 }
 
 export function getRegions(): Promise<IResponse<{id: number, name: string}[]>> {
-    return fetch(`${API_URL}/regions`).then(response => response.json());
+    return api.request<IResponse<{id: number, name: string}[]>>('regions');
 }
 
 export function getCities(): Promise<IResponse<{id: number, name: string}[]>> {
-    return fetch(`${API_URL}/cities`).then(response => response.json());
+    return api.request<IResponse<{id: number, name: string}[]>>('cities');
 }

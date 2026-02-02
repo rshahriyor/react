@@ -1,44 +1,43 @@
-import { environment } from "../../../environments/environment";
 import type { ICompaniesResponseForMainPage, ICompany } from "../models/Company";
 import type { IFilterRequest } from "../models/filter.model";
 import type { IResponse } from "../models/response.model";
-
-const API_URL = `${environment.apiUrl}/companies`;
+import { api } from "./api.service";
 
 export function getCompanies(): Promise<IResponse<ICompaniesResponseForMainPage[]>> {
-    return fetch(`${API_URL}/for_main_page`).then(response => response.json());
+    return api.request<IResponse<ICompaniesResponseForMainPage[]>>('companies/for_main_page');
 }
 
 export function getCompaniesByFilter(filter: IFilterRequest): Promise<IResponse<ICompany[]>> {
-    let params = new URLSearchParams();
+    return api.request<IResponse<ICompany[]>>(
+        'companies/by_filter',
+        {
+            queryParams: {
+                category_ids: filter.category_ids?.length
+                    ? filter.category_ids.join(',')
+                    : undefined,
 
-    if (filter.category_ids.length > 0) {
-        params.set('category_ids', filter.category_ids.join(','));
-    }
+                tag_ids: filter.tag_ids?.length
+                    ? filter.tag_ids.join(',')
+                    : undefined,
 
-    if (filter.tag_ids.length > 0) {
-        params.set('tag_ids', filter.tag_ids.join(','));
-    }
+                region_ids: filter.region_ids?.length
+                    ? filter.region_ids.join(',')
+                    : undefined,
 
-    if (filter.region_ids.length > 0) {
-        params.set('region_ids', filter.region_ids.join(','));
-    }
+                city_ids: filter.city_ids?.length
+                    ? filter.city_ids.join(',')
+                    : undefined,
 
-    if (filter.city_ids.length > 0) {
-        params.set('city_ids', filter.city_ids.join(','));
-    }
-
-    if (filter.is_favorite) {
-        params.set('is_favorite', 'true');
-    }
-
-    return fetch(`${API_URL}/by_filter?${params.toString()}`).then(response => response.json());
+                is_favorite: filter.is_favorite ? 'true' : undefined,
+            }
+        }
+    );
 }
 
 export function getCompany(companyId: number): Promise<IResponse<ICompany>> {
-    return fetch(`${API_URL}/${companyId}`).then(response => response.json());
+    return api.request<IResponse<ICompany>>(`companies/${companyId}`);
 }
 
 export function getMyCompanies(): Promise<IResponse<ICompany[]>> {
-    return fetch(`${API_URL}/own`).then(response => response.json());
+    return api.request<IResponse<ICompany[]>>('companies/own');
 }

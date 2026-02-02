@@ -13,18 +13,33 @@ interface TitleTempProps {
   id: number;
 }
 
+const TitleTemp = ({ name, id }: TitleTempProps) => {
+  return (
+    <div className="flex justify-between items-center">
+      <div className="gap-3.5 flex items-center">
+        <p className="text-[35px] font-bold m-0 text-(--text-color)">{name}</p>
+      </div>
+      <Link to={`/m-i/?category_ids=${id}`}
+        className="flex justify-center items-center cursor-pointer gap-1.75 max-w-25 w-full h-11.5 py-2.5 px-2.75 rounded-[18px] bg-white border border-[#ECEEEF] duration-300">
+        <span className="view-all-label">Еще</span>
+        <i className="pi pi-arrow-right"></i>
+      </Link >
+    </div >
+  );
+};
+
 const Home = () => {
   const { data: companies } = useQuery<IResponse<ICompaniesResponseForMainPage[]>>({
     queryKey: ['companies'],
     queryFn: getCompanies,
-    staleTime: 5 * 60 * 1000
+    staleTime: 60 * 1000
   });
 
   return (
     <>
       <div className="flex gap-5">
         <div className="max-w-70 w-full">
-          <Menu currentPage="Главная"/>
+          <Menu currentPage="Главная" />
         </div>
         <div className="max-w-145 w-full cursor-pointer">
           <img src={MainBanner} alt="main_banner" className="w-full h-full max-h-87.5 rounded-[18px]" />
@@ -42,8 +57,8 @@ const Home = () => {
               {category.companies.map((company: ICompany) => (
                 <div key={company.id} className="max-w-70 w-full">
                   <CompanyCard companyId={company.id || 0} companyTitle={company.name || ''} companyOwn={false}
-                    companyTags={company.tags || []} companyImage={company.files?.[0]} isFavorite={company.is_favorite || false} 
-                    favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]}/>
+                    companyTags={company.tags || []} companyImage={company.files?.[0]} isFavorite={company.is_favorite || false}
+                    favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]} />
                 </div>
               ))}
             </div>
@@ -53,20 +68,5 @@ const Home = () => {
     </>
   )
 }
-
-const TitleTemp = ({ name, id }: TitleTempProps) => {
-  return (
-    <div className="flex justify-between items-center">
-      <div className="gap-3.5 flex items-center">
-        <p className="text-[35px] font-bold m-0 text-(--text-color)">{name}</p>
-      </div>
-      <Link to={`/m-i/?category_ids=${id}`}
-        className="flex justify-center items-center cursor-pointer gap-1.75 max-w-25 w-full h-11.5 py-2.5 px-2.75 rounded-[18px] bg-white border border-[#ECEEEF] duration-300">
-        <span className="view-all-label">Еще</span>
-        <i className="pi pi-arrow-right"></i>
-      </Link >
-    </div >
-  );
-};
 
 export default Home;
