@@ -1,4 +1,4 @@
-import type { ICompaniesResponseForMainPage, ICompany } from "../models/Company";
+import type { ICompaniesResponseForMainPage, ICompany } from "../models/company.model";
 import type { IFilterRequest } from "../models/filter.model";
 import type { IResponse } from "../models/response.model";
 import { api } from "./api.service";

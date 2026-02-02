@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import type { ICompany } from "../../core/models/Company";
+import type { ICompany } from "../../core/models/company.model";
 import type { IResponse } from "../../core/models/response.model";
 import { getMyCompanies } from "../../core/services/company.service";
 import CompanyCard from "../../components/shared/CompanyCard";

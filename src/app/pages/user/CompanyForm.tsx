@@ -1,6 +1,6 @@
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import Dropdown from "../../components/shared/Dropdown";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getCategories, getCities, getRegions } from "../../core/services/dictionary.service";
 import { WEEK_DAYS } from "../../core/utils/constants";
 import { getTimeSlots } from "../../core/utils/helper";
@@ -8,6 +8,8 @@ import type { ICompanyForm } from "../../core/models/company-form.model";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ISchedule } from "../../core/models/schedule.model";
+import { useRef, useState } from "react";
+import { uploadFile } from "../../core/services/files.service";
 
 const socialMediaList = [
   {
@@ -66,6 +68,7 @@ const schema = z.object({
   latitude: z.string(),
   desc: z.string().optional(),
   is_active: z.boolean(),
+  file_ids: z.array(z.number()).optional(),
   schedules: z.array(z.object({
     start_at: z.string(),
     end_at: z.string()
@@ -122,6 +125,13 @@ const CompanyForm = () => {
     enabled: !!watch('region_id')
   });
 
+  const fileInputsRef = useRef<HTMLInputElement[]>([]);
+  const [imageList, setImageList] = useState(
+    Array.from({ length: 6 }).map(() => ({
+      id: Math.random(),
+      url: ''
+    }))
+  );
   const timeSlots = getTimeSlots();
   const socialMediaOptions = socialMediaList.map((sm) => ({ id: sm.id, name: sm.name }));
   const scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...timeSlots];
@@ -129,9 +139,46 @@ const CompanyForm = () => {
 
   const onSubmit: SubmitHandler<ICompanyForm> = (data) => {
     const social_media = data.social_media.filter((sm) => sm.social_media_id && sm.account_url);
-    data.social_media = social_media;
-    data.schedules = company_schedule(data.schedules, data.lunch_start_at, data.lunch_end_at);
-    console.log(data);
+    const file_ids = imageList.filter(img => img.url).map(img => img.id);
+    const { lunch_start_at, lunch_end_at, ...payload } = data;
+
+    payload.social_media = social_media;
+    payload.schedules = company_schedule( data.schedules, lunch_start_at, lunch_end_at );
+    payload.file_ids = file_ids;
+
+    console.log(payload);
+  };
+
+  const fileMutation = useMutation({
+    mutationFn: uploadFile,
+    onSuccess: (res, variables) => {
+      const { index, preview } = variables;
+      if (res.status.code === 0) {
+        console.log(res.data);
+        setImageList(prevState => prevState.map((img, i) => i === index ? { id: res.data.id!, url: preview as string } : img));
+      }
+    }
+  });
+  
+  const onFileSelected = ( e: React.ChangeEvent<HTMLInputElement>, index: number ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = () => {
+      const formData = new FormData();
+      formData.append('files', file);
+      
+      fileMutation.mutate({
+        formData, index, preview: reader.result as string
+      });
+    };
+    
+    reader.readAsDataURL(file);
+  };
+
+  const triggerFileInput = (index: number) => {
+    fileInputsRef.current[index]?.click();
   };
 
   return (
@@ -168,6 +215,34 @@ const CompanyForm = () => {
               {...register('phone_number')} />
           </div>
         </label>
+
+        <div className="flex flex-col gap-1">
+          <span className="w-fit relative text-lg mb-0.75 required font-semibold text-(--text-color)">Загрузите фотографии</span>
+          <div className="flex flex-wrap gap-5">
+            {imageList.map((img, index) => (
+              <div key={img.id} className="relative">
+                {img.url && (
+                  <div className="flex justify-center items-center cursor-pointer absolute -top-2 -right-2 bg-red-500 w-7 h-7 rounded-full"
+                    onClick={() => ('')}>
+                    <i className="pi pi-minus text-white" />
+                  </div>
+                )}
+
+                <div className={`w-45 h-27.5 bg-white rounded-2xl ${ !img.url && 'cursor-pointer'} flex justify-center items-center overflow-hidden`}
+                  onClick={() => !img.url && triggerFileInput(index)}>
+                  {img.url ? (
+                    <img src={img.url} className="w-full h-full object-cover" />
+                  ) : (
+                    <i className="pi pi-plus" />
+                  )}
+
+                  <input type="file" hidden ref={(el) => { fileInputsRef.current[index] = el! }}
+                    onChange={e => onFileSelected(e, index)} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="flex flex-col gap-1">
           <span className="w-fit relative text-lg mb-0.75 required font-semibold text-(--text-color)">Укажите график работы</span>

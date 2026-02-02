@@ -4,7 +4,7 @@ import { useState, type ChangeEvent } from "react"
 import type { IResponse } from "../core/models/response.model";
 import { getCategories, getCities, getRegions, getTags } from "../core/services/dictionary.service";
 import type { IFilterRequest } from "../core/models/filter.model";
-import type { ICompany } from "../core/models/Company";
+import type { ICompany } from "../core/models/company.model";
 import { getCompaniesByFilter } from "../core/services/company.service";
 import CompanyCard from "../components/shared/CompanyCard";
 
