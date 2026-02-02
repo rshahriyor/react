@@ -29,7 +29,7 @@ const Login = () => {
       } else if (response.status.code === 0) {
         localStorage.setItem('token', response.data.token);
         setIsWrongCredentials(false);
-        navigate('/');
+        navigate('/u/m-c');
       }
     }
   });

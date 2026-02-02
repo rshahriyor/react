@@ -3,12 +3,12 @@ import { NavLink, Outlet } from 'react-router-dom';
 const User = () => {
     const menuItems = [
         {
-            label: 'My Companies',
+            label: 'Мои заведения',
             route: 'm-c',
             icon: 'pi pi-building'
         },
         {
-            label: 'Profile',
+            label: 'Профиль',
             route: 'p',
             icon: 'pi pi-user'
         }

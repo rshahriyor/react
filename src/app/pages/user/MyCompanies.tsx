@@ -24,7 +24,7 @@ const MyCompanies = () => {
       <div className="w-full">
         <div className="flex flex-wrap gap-5">
           {companies?.data.map((company) => (
-            <div className="max-w-70 w-full">
+            <div key={company.id} className="max-w-70 w-full">
               <CompanyCard companyId={company.id || 0} companyTitle={company.name || ''} companyOwn={true}
                 companyTags={company.tags || []} companyImage={company.files?.[0]} companyStatus={company?.is_active}
                 isFavorite={company.is_favorite || false} favoritesCount={company.favorites_count || 0} />
