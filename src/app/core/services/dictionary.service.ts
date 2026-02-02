@@ -9,6 +9,12 @@ export function getTags(): Promise<IResponse<{id: number, name: string}[]>> {
     return api.request<IResponse<{id: number, name: string}[]>>('tags');
 }
 
+export function getTagsByCategory(category_id: number): Promise<IResponse<{id: number, name: string}[]>> {
+    return api.request<IResponse<{id: number, name: string}[]>>('tags/by_category', {
+        queryParams: category_id ? { category_id: category_id.toString() } : {}
+    });
+}
+
 export function getRegions(): Promise<IResponse<{id: number, name: string}[]>> {
     return api.request<IResponse<{id: number, name: string}[]>>('regions');
 }

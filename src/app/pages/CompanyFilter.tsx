@@ -12,8 +12,7 @@ const CompanyFilter = () => {
   const staleTime = 30 * 60 * 1000;
   const { data: companies } = useQuery<IResponse<ICompany[]>>({
     queryKey: ['companies_by_filter'],
-    queryFn: () => getCompaniesByFilter(filterRequest),
-    staleTime: 5 * 60 * 1000
+    queryFn: () => getCompaniesByFilter(filterRequest)
   });
 
   const { data: categories } = useQuery<IResponse<{ id: number, name: string }[]>>({

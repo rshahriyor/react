@@ -1,3 +1,4 @@
+import type { ICompanyForm } from "../models/company-form.model";
 import type { ICompaniesResponseForMainPage, ICompany } from "../models/company.model";
 import type { IFilterRequest } from "../models/filter.model";
 import type { IResponse } from "../models/response.model";
@@ -40,4 +41,11 @@ export function getCompany(companyId: number): Promise<IResponse<ICompany>> {
 
 export function getMyCompanies(): Promise<IResponse<ICompany[]>> {
     return api.request<IResponse<ICompany[]>>('companies/own');
+}
+
+export function postCompany(company: ICompanyForm): Promise<IResponse<ICompany>> {
+    return api.request<IResponse<ICompany>>('companies', {
+        method: 'POST',
+        body: company
+    })
 }
