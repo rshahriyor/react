@@ -3,7 +3,7 @@ import MainBanner from "../assets/main-banner.png";
 import RightSideImage from "../assets/right-side-main-image.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "../core/services/company.service";
-import type { ICompaniesResponseForMainPage, ICompany } from "../core/models/Company";
+import type { ICompaniesResponseForMainPage, ICompany } from "../core/models/company.model";
 import type { IResponse } from "../core/models/response.model";
 import CompanyCard from "../components/shared/CompanyCard";
 import Menu from "../components/shared/Menu";

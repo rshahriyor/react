@@ -1,6 +1,6 @@
 import { useEffect, useState, type MouseEvent } from 'react'
 import { NavLink } from 'react-router-dom'
-import type { IFile } from '../../core/models/Company';
+import type { IFile } from '../../core/models/company.model';
 import { environment } from '../../../environments/environment';
 import type { ISchedule } from '../../core/models/schedule.model';
 

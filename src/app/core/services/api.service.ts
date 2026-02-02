@@ -48,7 +48,7 @@ export class ApiClient {
     const config: RequestInit = {
       credentials: 'include',
       headers: {
-        ...this.defaultHeaders,
+        ...(body instanceof FormData ? {} : this.defaultHeaders),
         ...restOptions.headers,
         ...(token ? { Authorization: `Bearer ${token}` } : {})
       },

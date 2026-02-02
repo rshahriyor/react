@@ -1,7 +1,7 @@
 import type { ISchedule } from "./schedule.model";
 
 export interface ICompanyForm {
-    name: string;
+  name: string;
   category_id: number | null;
   phone_number: string;
   region_id: number | null;
@@ -10,6 +10,7 @@ export interface ICompanyForm {
   longitude: string;
   latitude: string;
   is_active: boolean;
+  file_ids?: number[] | null;
   schedules: ISchedule[];
   social_media: {
     social_media_id?: number;
