@@ -16,10 +16,11 @@ type LoginForm = z.infer<typeof schema>;
 
 const Login = () => {
   const [isWrongCredentials, setIsWrongCredentials] = useState(false);
+  const navigate = useNavigate();
+  
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(schema),
   });
-  const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: loginform,
