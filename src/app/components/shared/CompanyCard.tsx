@@ -3,6 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { IFile } from '../../core/models/company.model';
 import { environment } from '../../../environments/environment';
 import type { ISchedule } from '../../core/models/schedule.model';
+import { useMutation } from '@tanstack/react-query';
+import { toggleCompanyFavorite } from '../../core/services/company.service';
+
+const imageUrl = environment.imageUrl;
+const token = localStorage.getItem('token');
 
 interface CompanyCardProps {
     companyId: number;
@@ -31,7 +36,8 @@ const CompanyCard = ({
     const [isWorking, setIsWorking] = useState(false);
     const [atLunch, setAtLunch] = useState(false);
     const [isClosed, setIsClosed] = useState(true);
-    const imageUrl = environment.imageUrl;
+    const [isCompanyFavorite, setIsCompanyFavorite] = useState(isFavorite);
+    const [favoritesCountState, setFavoritesCountState] = useState(favoritesCount);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,12 +49,25 @@ const CompanyCard = ({
         e.preventDefault();
     }
 
+    const toggleFavoriteCompanyMutation = useMutation({
+        mutationFn: () => toggleCompanyFavorite(companyId, {}),
+        onSuccess: (res) => {
+            if (res.status.code === 0) {
+                setIsCompanyFavorite(!isCompanyFavorite);
+                setFavoritesCountState(prev => isCompanyFavorite ? prev - 1 : prev + 1);
+            }
+        }
+    })
+
     const updateCompanyStatus = () => {
 
     }
 
-    const toggleFavoriteCard = () => {
-
+    const toggleFavoriteCompany = () => {
+        if (!token) {
+            return alert('Пожалуйста, войдите в систему, чтобы добавить в избранное.');
+        };
+        toggleFavoriteCompanyMutation.mutate();
     }
 
     const calculateWorkingDay = () => {
@@ -172,11 +191,11 @@ const CompanyCard = ({
                     <div className="flex items-center gap-1.25 w-fit"
                         onClick={(e) => {
                             eventsClick(e);
-                            toggleFavoriteCard()
+                            toggleFavoriteCompany()
                         }}>
-                        <i className={`${isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'} text-xl text-[#FF7676]`}></i>
+                        <i className={`${isCompanyFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'} text-xl text-[#FF7676]`}></i>
                         <span className="text-[18px] text-[#FF7676]">
-                            {favoritesCount}
+                            {favoritesCountState}
                         </span>
                     </div>
                 )}
