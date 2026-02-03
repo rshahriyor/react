@@ -63,3 +63,10 @@ export function toggleCompanyFavorite(companyId: number, body: {}): Promise<IRes
         body: body
     });
 }
+
+export function toggleCompanyStatus(companyId: number, body: {is_active: boolean}): Promise<IResponse<{message: string}>> {
+    return api.request<IResponse<{message: string}>>(`companies/${companyId}/status`, {
+        method: 'POST',
+        body: body
+    });
+}
