@@ -15,52 +15,19 @@ import { getCompany, postCompany, putCompany } from "../../core/services/company
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { environment } from "../../../environments/environment";
 
-const socialMediaList = [
-  {
-    id: 1,
-    name: 'Instagram'
-  },
-  {
-    id: 2,
-    name: 'Facebook'
-  },
-  {
-    id: 3,
-    name: 'Telegram'
-  },
-  {
-    id: 4,
-    name: 'WhatsApp'
-  }
-];
+
 const imageUrl = environment.imageUrl;
 const weekDays = WEEK_DAYS;
-const company_schedule = (schedules: ISchedule[], lunch_start_at: string, lunch_end_at: string) => {
-  return schedules.map((value, index: number) => {
-    const is_working_day = value.start_at !== 'Выходной';
-    const is_day_and_night = value.start_at === 'Круглосуточно';
-    const without_breaks = lunch_start_at === 'Без перерыва';
-
-    let start_at = value.start_at;
-    let end_at = value.end_at;
-
-    if (!is_working_day || is_day_and_night) {
-      start_at = '00:00';
-      end_at = '23:59';
-    }
-
-    return {
-      day_of_week: index + 1,
-      start_at,
-      end_at,
-      is_working_day,
-      is_day_and_night,
-      without_breaks,
-      lunch_start_at: without_breaks ? '' : lunch_start_at,
-      lunch_end_at: without_breaks ? '' : lunch_end_at
-    };
-  });
-}
+const socialMediaList = [
+  { id: 1, name: "Instagram" },
+  { id: 2, name: "Facebook" },
+  { id: 3, name: "Telegram" },
+  { id: 4, name: "WhatsApp" },
+];
+const timeSlots = getTimeSlots();
+const socialMediaOptions = socialMediaList.map((sm) => ({ id: sm.id, name: sm.name }));
+const scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...timeSlots];
+const lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...timeSlots];
 
 const schema = z.object({
   name: z.string(),
@@ -89,12 +56,34 @@ const schema = z.object({
 
 type CompanyFormData = z.infer<typeof schema>;
 
-const CompanyForm = () => {
-  const timeSlots = getTimeSlots();
-  const socialMediaOptions = socialMediaList.map((sm) => ({ id: sm.id, name: sm.name }));
-  const scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...timeSlots];
-  const lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...timeSlots];
+const company_schedule = (schedules: ISchedule[], lunch_start_at: string, lunch_end_at: string) => {
+  return schedules.map((value, index: number) => {
+    const is_working_day = value.start_at !== 'Выходной';
+    const is_day_and_night = value.start_at === 'Круглосуточно';
+    const without_breaks = lunch_start_at === 'Без перерыва';
 
+    let start_at = value.start_at;
+    let end_at = value.end_at;
+
+    if (!is_working_day || is_day_and_night) {
+      start_at = '00:00';
+      end_at = '23:59';
+    }
+
+    return {
+      day_of_week: index + 1,
+      start_at,
+      end_at,
+      is_working_day,
+      is_day_and_night,
+      without_breaks,
+      lunch_start_at: without_breaks ? '' : lunch_start_at,
+      lunch_end_at: without_breaks ? '' : lunch_end_at
+    };
+  });
+}
+
+const CompanyForm = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { control, register, watch, handleSubmit, setValue, reset } =
