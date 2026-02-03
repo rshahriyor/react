@@ -4,7 +4,7 @@ import type { IFile } from '../../core/models/company.model';
 import { environment } from '../../../environments/environment';
 import type { ISchedule } from '../../core/models/schedule.model';
 import { useMutation } from '@tanstack/react-query';
-import { toggleCompanyFavorite } from '../../core/services/company.service';
+import { toggleCompanyFavorite, toggleCompanyStatus } from '../../core/services/company.service';
 
 const imageUrl = environment.imageUrl;
 const token = localStorage.getItem('token');
@@ -36,8 +36,9 @@ const CompanyCard = ({
     const [isWorking, setIsWorking] = useState(false);
     const [atLunch, setAtLunch] = useState(false);
     const [isClosed, setIsClosed] = useState(true);
-    const [isCompanyFavorite, setIsCompanyFavorite] = useState(isFavorite);
+    const [isFavoriteState, setIsFavoriteState] = useState(isFavorite);
     const [favoritesCountState, setFavoritesCountState] = useState(favoritesCount);
+    const [companyStatusState, setCompanyStatusState] = useState(companyStatus);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -53,14 +54,26 @@ const CompanyCard = ({
         mutationFn: () => toggleCompanyFavorite(companyId, {}),
         onSuccess: (res) => {
             if (res.status.code === 0) {
-                setIsCompanyFavorite(!isCompanyFavorite);
-                setFavoritesCountState(prev => isCompanyFavorite ? prev - 1 : prev + 1);
+                setIsFavoriteState(!isFavoriteState);
+                setFavoritesCountState(prev => isFavoriteState ? prev - 1 : prev + 1);
             }
         }
-    })
+    });
+
+    const toggleCompanyStatusMutation = useMutation({
+        mutationFn: () =>  toggleCompanyStatus(companyId, {is_active: !companyStatusState}),
+        onSuccess: (res) => {
+            if (res.status.code === 0) {
+                setCompanyStatusState(prev => !prev);
+            }
+        }
+    });
 
     const updateCompanyStatus = () => {
-
+        if (!token) {
+            return alert('Пожалуйста, войдите в систему, чтобы изменить статус компании.');
+        };
+        toggleCompanyStatusMutation.mutate();
     }
 
     const toggleFavoriteCompany = () => {
@@ -162,7 +175,7 @@ const CompanyCard = ({
                                             eventsClick(e)
                                             updateCompanyStatus()
                                         }}>
-                                        {companyStatus ? 'Скрыть' : 'Показать'}
+                                        {companyStatusState ? 'Скрыть' : 'Показать'}
                                     </li>
                                 </ul>
                             )}
@@ -193,7 +206,7 @@ const CompanyCard = ({
                             eventsClick(e);
                             toggleFavoriteCompany()
                         }}>
-                        <i className={`${isCompanyFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'} text-xl text-[#FF7676]`}></i>
+                        <i className={`${isFavoriteState ? 'pi pi-heart-fill' : 'pi pi-heart'} text-xl text-[#FF7676]`}></i>
                         <span className="text-[18px] text-[#FF7676]">
                             {favoritesCountState}
                         </span>
