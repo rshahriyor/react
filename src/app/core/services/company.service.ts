@@ -56,3 +56,10 @@ export function putCompany(companyId: number, company: ICompanyForm): Promise<IR
         body: company
     })
 }
+
+export function toggleCompanyFavorite(companyId: number, body: {}): Promise<IResponse<{message: string}>> {
+    return api.request<IResponse<{message: string}>>(`companies/toggle_favorite/${companyId}`, {
+        method: 'POST',
+        body: body
+    });
+}

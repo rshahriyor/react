@@ -32,7 +32,7 @@ const Filter = ({ id, label, filterRequestType }: FilterProps) => {
 
     return (
         <section className="max-w-70 w-full">
-            <label className="flex items-center gap-4.25 cursor-pointer py-1.25 px-2 hover:bg-white duration-200 rounded-2xl">
+            <label className="flex items-center gap-4.25 cursor-pointer py-1.25 px-2 hover:bg-white duration-200 rounded-md">
                 <input checked={checked} onChange={sendFilter} type="checkbox" className="custom-checkbox" />{label}
             </label>
         </section>
