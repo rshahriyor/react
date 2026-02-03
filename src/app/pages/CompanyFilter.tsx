@@ -1,17 +1,52 @@
 import { useQuery } from "@tanstack/react-query";
 import Filter from "../components/shared/Filter"
-import { useState, type ChangeEvent } from "react"
+import { useEffect, useState, type ChangeEvent } from "react"
 import type { IResponse } from "../core/models/response.model";
 import { getCategories, getCities, getRegions, getTags } from "../core/services/dictionary.service";
 import type { IFilterRequest } from "../core/models/filter.model";
 import type { ICompany } from "../core/models/company.model";
 import { getCompaniesByFilter } from "../core/services/company.service";
 import CompanyCard from "../components/shared/CompanyCard";
+import { useSearchParams } from "react-router-dom";
 
 const CompanyFilter = () => {
   const staleTime = 30 * 60 * 1000;
-  const { data: companies } = useQuery<IResponse<ICompany[]>>({
-    queryKey: ['companies_by_filter'],
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filterRequest, setFilterRequest] = useState<IFilterRequest>({
+    category_ids: [],
+    tag_ids: [],
+    region_ids: [],
+    city_ids: [],
+    is_favorite: false
+  });
+
+  const [showAllFilter, setShowAllFilter] = useState({
+    companyCategory: false,
+    companyTag: false,
+    city: false,
+    region: false
+  });
+
+  useEffect(() => {
+    const categoryIds = searchParams.get('category_ids')?.split(',').map(Number) || [];
+    const tagIds = searchParams.get('tag_ids')?.split(',').map(Number) || [];
+    const regionIds = searchParams.get('region_ids')?.split(',').map(Number) || [];
+    const cityIds = searchParams.get('city_ids')?.split(',').map(Number) || [];
+    const isFavorite = searchParams.get('is_favorite') === 'true';
+
+    setFilterRequest({
+      category_ids: categoryIds,
+      tag_ids: tagIds,
+      region_ids: regionIds,
+      city_ids: cityIds,
+      is_favorite: isFavorite
+    });
+    console.log(categoryIds);
+
+  }, [searchParams]);
+
+  const { data: companies, isLoading } = useQuery<IResponse<ICompany[]>>({
+    queryKey: ['companies_by_filter', filterRequest],
     queryFn: () => getCompaniesByFilter(filterRequest)
   });
 
@@ -39,21 +74,6 @@ const CompanyFilter = () => {
     staleTime
   });
 
-  const [filterRequest, setFilterRequest] = useState<IFilterRequest>({
-    category_ids: [],
-    tag_ids: [],
-    region_ids: [],
-    city_ids: [],
-    is_favorite: false
-  });
-
-  const [showAllFilter, setShowAllFilter] = useState({
-    companyCategory: false,
-    companyTag: false,
-    city: false,
-    region: false
-  });
-
   const loadFilterWithoutLimit = (filterType: 'company_categories' | 'company_tags' | 'regions' | 'cities') => {
     switch (filterType) {
       case 'company_categories':
@@ -71,19 +91,30 @@ const CompanyFilter = () => {
     }
   };
 
-  const toggleSelectAll = (event: ChangeEvent<HTMLInputElement>, filterRequestType: 'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids') => {
+  const toggleSelectAll = (event: ChangeEvent<HTMLInputElement>, type: 'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids') => {
     const isChecked = (event.target as HTMLInputElement).checked;
-    switch (filterRequestType) {
-      case 'category_ids':
-        if (isChecked && categories?.data) {
-          setFilterRequest(prev => ({ ...prev, category_ids: categories.data.map(category => category.id) }));
-        } else {
-          setFilterRequest(prev => ({ ...prev, category_ids: [] }));
-        }
-        break;
+    const nextParams = new URLSearchParams(searchParams);
+    if (isChecked) {
+      const ids = getIdsByType(type);
+      nextParams.set(type, ids.join(','));
+    } else {
+      nextParams.delete(type);
     }
+    setSearchParams(nextParams);
   }
 
+  function getIdsByType(type: 'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids') {
+    switch (type) {
+      case 'category_ids':
+        return categories?.data.map(category => category.id) || [];
+      case 'tag_ids':
+        return tags?.data.map(tag => tag.id) || [];
+      case 'region_ids':
+        return regions?.data.map(region => region.id) || [];
+      case 'city_ids':
+        return cities?.data.map(city => city.id) || [];
+    }
+  }
 
   return (
     <section className="flex gap-5">
@@ -95,7 +126,7 @@ const CompanyFilter = () => {
         <div className="flex flex-col gap-2">
           <span className="text-lg font-bold">Категории</span>
           <div className="flex flex-col gap-1.5">
-            <li className="flex items-center gap-4.25">
+            <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'category_ids')} checked={!!categories?.data.length && filterRequest.category_ids.length === categories.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
@@ -117,7 +148,7 @@ const CompanyFilter = () => {
         <div className="flex flex-col gap-2">
           <span className="text-lg font-bold">Теги</span>
           <div className="flex flex-col gap-1.5">
-            <li className="flex items-center gap-4.25">
+            <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'tag_ids')} checked={!!tags?.data.length && filterRequest.tag_ids.length === tags.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
@@ -139,7 +170,7 @@ const CompanyFilter = () => {
         <div className="flex flex-col gap-2">
           <span className="text-lg font-bold">Регионы</span>
           <div className="flex flex-col gap-1.5">
-            <li className="flex items-center gap-4.25">
+            <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'region_ids')} checked={!!regions?.data.length && filterRequest.region_ids.length === regions.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
@@ -161,7 +192,7 @@ const CompanyFilter = () => {
         <div className="flex flex-col gap-2">
           <span className="text-lg font-bold">Города</span>
           <div className="flex flex-col gap-1.5">
-            <li className="flex items-center gap-4.25">
+            <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'city_ids')} checked={!!cities?.data.length && filterRequest.city_ids.length === cities.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
                 <input type="text" className="max-w-50 h-10! liquid-glass-input" />
@@ -183,18 +214,22 @@ const CompanyFilter = () => {
       </aside>
       <div className="w-full flex flex-col gap-5">
         <p className="text-[32px] font-semibold m-0 text-(--text-color)">{filterRequest.is_favorite ? 'Избранные' : 'Результаты поиска'}</p>
-        <div className="flex flex-wrap gap-5">
-          {companies?.data.map((company) => (
-            <div key={company.id} className="max-w-70 w-full">
-              <CompanyCard companyId={company.id || 0} companyTitle={company.name || ''} companyOwn={false}
-                companyTags={company.tags || []} companyImage={company.files?.[0]} isFavorite={company.is_favorite || false} 
-                favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]} />
-            </div>
-          ))}
-          {!companies?.data.length && (
-            <p className="text-[26px] font-medium m-0 text-[#52526190]">К сожалению нет данных</p>
-          )}
-        </div>
+        {!isLoading ? (
+          <div className="flex flex-wrap gap-5">
+            {companies?.data.map((company) => (
+              <div key={company.id} className="max-w-70 w-full">
+                <CompanyCard companyId={company.id || 0} companyTitle={company.name || ''} companyOwn={false}
+                  companyTags={company.tags || []} companyImage={company.files?.[0]} isFavorite={company.is_favorite || false}
+                  favoritesCount={company.favorites_count || 0} schedule={company.schedules?.[0]} />
+              </div>
+            ))}
+            {!companies?.data.length && (
+              <p className="text-[26px] font-medium m-0 text-[#52526190]">К сожалению нет данных</p>
+            )}
+          </div>
+        ) : (
+          <p className="text-[26px] font-medium m-0 text-[#52526190]">Loading...</p>
+        )}
       </div>
     </section>
   )

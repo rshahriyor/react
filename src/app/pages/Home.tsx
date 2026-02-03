@@ -19,7 +19,7 @@ const TitleTemp = ({ name, id }: TitleTempProps) => {
       <div className="gap-3.5 flex items-center">
         <p className="text-[35px] font-bold m-0 text-(--text-color)">{name}</p>
       </div>
-      <Link to={`/m-i/?category_ids=${id}`}
+      <Link to={`/m-i?category_ids=${id}`}
         className="flex justify-center items-center cursor-pointer gap-1.75 max-w-25 w-full h-11.5 py-2.5 px-2.75 rounded-[18px] bg-white border border-[#ECEEEF] duration-300">
         <span className="view-all-label">Еще</span>
         <i className="pi pi-arrow-right"></i>

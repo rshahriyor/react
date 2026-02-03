@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 interface FilterProps {
     id: number,
@@ -7,19 +8,35 @@ interface FilterProps {
 }
 
 const Filter = ({ id, label, filterRequestType }: FilterProps) => {
-    const [checked, setChecked] = useState<boolean>(false);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [checked, setChecked] = useState(false);
+    const getSearchParams = () => searchParams.get(filterRequestType)?.split(',').map(Number) ?? [];
+
+    useEffect(() => {
+        const values = getSearchParams();
+        setChecked(values.includes(id));
+    }, [searchParams, filterRequestType, id]);
 
     const sendFilter = () => {
-        setChecked(!checked);
-    }
+        const current = getSearchParams();
+        const updated = current.includes(id) ? current.filter(v => v !== id) : [...current, id];
+        const nextParams = new URLSearchParams(searchParams);
+
+        if (updated.length > 0) {
+            nextParams.set(filterRequestType, updated.join(','));
+        } else {
+            nextParams.delete(filterRequestType);
+        }
+        setSearchParams(nextParams);
+    };
 
     return (
         <section className="max-w-70 w-full">
-            <label className="flex items-center mt-1.25 gap-4.25 cursor-pointer">
+            <label className="flex items-center gap-4.25 cursor-pointer py-1.25 px-2 hover:bg-white duration-200 rounded-2xl">
                 <input checked={checked} onChange={sendFilter} type="checkbox" className="custom-checkbox" />{label}
             </label>
         </section>
     )
 }
 
-export default Filter
+export default Filter;

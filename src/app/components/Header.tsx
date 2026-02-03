@@ -19,7 +19,7 @@ const Header = () => {
                         <i className="pi pi-user text-(--text-color) text-2xl"></i>
                         <span className="text-(--text-color) text-sm">Аккаунт</span>
                     </Link>
-                    <Link to='/m-i' className="flex flex-col items-center gap-px cursor-pointer" >
+                    <Link to='/m-i?is_favorite=true' className="flex flex-col items-center gap-px cursor-pointer" >
                         <i className="pi pi-heart text-(--text-color) text-2xl"></i>
                         <span className="text-(--text-color) text-sm">Избранные</span>
                     </Link >
