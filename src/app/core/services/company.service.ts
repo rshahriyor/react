@@ -49,3 +49,10 @@ export function postCompany(company: ICompanyForm): Promise<IResponse<ICompany>>
         body: company
     })
 }
+
+export function putCompany(companyId: number, company: ICompanyForm): Promise<IResponse<ICompany>> {
+    return api.request<IResponse<ICompany>>(`companies/${companyId}`, {
+        method: 'PUT',
+        body: company
+    })
+}

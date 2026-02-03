@@ -8,8 +8,7 @@ import CompanyCard from "../../components/shared/CompanyCard";
 const MyCompanies = () => {
   const { data: companies } = useQuery<IResponse<ICompany[]>>({
     queryKey: ['my_companies'],
-    queryFn: getMyCompanies,
-    staleTime: 60 * 1000
+    queryFn: getMyCompanies
   });
   
   return (

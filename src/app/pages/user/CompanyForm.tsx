@@ -8,11 +8,12 @@ import type { ICompanyForm } from "../../core/models/company-form.model";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ISchedule } from "../../core/models/schedule.model";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../core/services/files.service";
-import MultiSelect from "../../components/shared/Multiselect";
-import { postCompany } from "../../core/services/company.service";
-import { useNavigate } from "react-router-dom";
+import MultiSelect from "../../components/shared/MultiSelect";
+import { getCompany, postCompany, putCompany } from "../../core/services/company.service";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { environment } from "../../../environments/environment";
 
 const socialMediaList = [
   {
@@ -32,6 +33,7 @@ const socialMediaList = [
     name: 'WhatsApp'
   }
 ];
+const imageUrl = environment.imageUrl;
 const weekDays = WEEK_DAYS;
 const company_schedule = (schedules: ISchedule[], lunch_start_at: string, lunch_end_at: string) => {
   return schedules.map((value, index: number) => {
@@ -88,8 +90,14 @@ const schema = z.object({
 type CompanyFormData = z.infer<typeof schema>;
 
 const CompanyForm = () => {
+  const timeSlots = getTimeSlots();
+  const socialMediaOptions = socialMediaList.map((sm) => ({ id: sm.id, name: sm.name }));
+  const scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...timeSlots];
+  const lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...timeSlots];
+
   const navigate = useNavigate();
-  const { control, register, watch, handleSubmit, setValue } =
+  const { id } = useParams<{ id: string }>();
+  const { control, register, watch, handleSubmit, setValue, reset } =
     useForm<CompanyFormData>({
       resolver: zodResolver(schema),
       defaultValues: {
@@ -136,6 +144,16 @@ const CompanyForm = () => {
     enabled: !!watch('region_id')
   });
 
+  const { data: company } = useQuery({
+    queryKey: ['company', id],
+    queryFn: () => getCompany(Number(id)),
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    getCompanyById();
+  }, [company]);
+
   const fileInputsRef = useRef<HTMLInputElement[]>([]);
   const [imageList, setImageList] = useState(
     Array.from({ length: 6 }).map(() => ({
@@ -143,13 +161,20 @@ const CompanyForm = () => {
       url: ''
     }))
   );
-  const timeSlots = getTimeSlots();
-  const socialMediaOptions = socialMediaList.map((sm) => ({ id: sm.id, name: sm.name }));
-  const scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...timeSlots];
-  const lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...timeSlots];
 
   const companyMutation = useMutation({
     mutationFn: postCompany,
+    onSuccess: (res) => {
+      if (res.status.code === 0) {
+        navigate('/u/m-c');
+      }
+    }
+  });
+
+  const putCompanyMutation = useMutation({
+    mutationFn: (data: ICompanyForm) => {
+      return putCompany(Number(id), data);
+    },
     onSuccess: (res) => {
       if (res.status.code === 0) {
         navigate('/u/m-c');
@@ -166,7 +191,11 @@ const CompanyForm = () => {
     payload.schedules = company_schedule(data.schedules, lunch_start_at ?? '', lunch_end_at ?? '');
     payload.file_ids = file_ids;
 
-    companyMutation.mutate(payload);
+    if (id) {
+      putCompanyMutation.mutate(payload);
+    } else {
+      companyMutation.mutate(payload);
+    }
     console.log(payload);
   };
 
@@ -175,12 +204,11 @@ const CompanyForm = () => {
     onSuccess: (res, variables) => {
       const { index, preview } = variables;
       if (res.status.code === 0) {
-        console.log(res.data);
         setImageList(prevState => prevState.map((img, i) => i === index ? { id: res.data.id!, url: preview as string } : img));
       }
     }
   });
-  
+
   const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -202,12 +230,71 @@ const CompanyForm = () => {
     fileInputsRef.current[index]?.click();
   };
 
+  function getCompanyById(): void {
+    if (!company?.data) return;
+
+    const companyData = company.data;
+
+    reset({
+      name: companyData.name,
+      category_id: companyData.category_id,
+      tag_id: companyData.tags?.map(t => t.tag_id) ?? [],
+      phone_number: companyData.phone_number,
+      region_id: companyData.region_id,
+      city_id: companyData.city_id,
+      address: companyData.address,
+      latitude: companyData.latitude,
+      longitude: companyData.longitude,
+      desc: companyData.desc,
+      is_active: companyData.is_active,
+
+      lunch_start_at: companyData.schedules?.[0].lunch_start_at || 'Без перерыва',
+      lunch_end_at: companyData.schedules?.[0].lunch_end_at || '',
+
+      schedules: companyData.schedules.map(s => ({
+        start_at: s.is_day_and_night
+          ? 'Круглосуточно'
+          : s.is_working_day
+            ? s.start_at
+            : 'Выходной',
+        end_at: s.end_at,
+      })),
+
+      social_media: socialMediaList.map(sm => {
+        const found = companyData.social_media.find(
+          s => s.social_media_id === sm.id
+        );
+
+        return found
+          ? {
+            social_media_id: found.social_media_id,
+            account_url: found.account_url,
+          }
+          : {};
+      }),
+    });
+
+    const filledImages = companyData.files.map(file => ({
+      id: file.id!,
+      url: `${imageUrl}/${file.file_name!}`,
+    }));
+
+    const emptyImages = Array.from({
+      length: 6 - filledImages.length,
+    }).map(() => ({
+      id: Math.random(),
+      url: '',
+    }));
+
+    setImageList([...filledImages, ...emptyImages]);
+  }
+
   return (
     <section className="w-full max-w-145 flex flex-col gap-5">
       <div className="flex items-center gap-3">
         <i className="pi pi-building text-[28px] text-(--text-color)" />
         <p className="text-[28px] font-semibold text-(--text-color)">
-          Добавлении заведения
+          {id ? 'Редактирование заведения' : 'Добавлении заведения'}
         </p>
       </div>
 
@@ -424,11 +511,13 @@ const CompanyForm = () => {
 
         <div className="flex gap-5">
           <button type="submit" className="h-12 rounded-2xl bg-(--bg-color) text-white w-full cursor-pointer">
-            Добавить
+            {id ? 'Редактировать' : 'Добавить'}
           </button>
 
           <button type="button" className="h-12 rounded-2xl bg-white w-full cursor-pointer">
-            Отмена
+            <Link to='/u/m-c'>
+              Отмена
+            </Link>
           </button>
         </div>
       </form>

@@ -1,5 +1,5 @@
 import { useEffect, useState, type MouseEvent } from 'react'
-import { NavLink } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import type { IFile } from '../../core/models/company.model';
 import { environment } from '../../../environments/environment';
 import type { ISchedule } from '../../core/models/schedule.model';
@@ -9,7 +9,7 @@ interface CompanyCardProps {
     companyTitle: string;
     isFavorite: boolean;
     favoritesCount: number;
-    companyTags: {tag_name: string}[];
+    companyTags: { tag_name: string }[];
     companyOwn: boolean;
     companyStatus?: boolean;
     companyImage?: IFile;
@@ -32,6 +32,7 @@ const CompanyCard = ({
     const [atLunch, setAtLunch] = useState(false);
     const [isClosed, setIsClosed] = useState(true);
     const imageUrl = environment.imageUrl;
+    const navigate = useNavigate();
 
     useEffect(() => {
         calculateWorkingDay();
@@ -93,8 +94,7 @@ const CompanyCard = ({
     }
 
     return (
-        <NavLink
-            to={`/m/${companyId}`}
+        <Link to={`/m/${companyId}`}
             className="flex h-full cursor-pointer flex-col gap-1.5 rounded-[18px] bg-white p-3.75 max-sm:flex-row max-sm:max-h-36 max-sm:px-2.5 max-sm:py-2.75">
             <div className="relative h-44.75 w-full max-sm:max-w-46.25 max-sm:h-full">
                 {companyImage && (
@@ -113,7 +113,7 @@ const CompanyCard = ({
                         <div className="relative flex justify-end">
                             <i className="pi pi-ellipsis-v rounded-full bg-white p-1.5 duration-200"
                                 onClick={(e) => {
-                                    eventsClick(e)
+                                    eventsClick(e);
                                     setShowMenu(!showMenu)
                                 }} />
 
@@ -121,13 +121,21 @@ const CompanyCard = ({
                                 <ul className="absolute right-0 top-7.5 z-100 flex w-max flex-col overflow-auto rounded-2xl bg-(--body-bg-color) shadow-xl"
                                     onClick={(e) => e.stopPropagation()}>
                                     <li className="cursor-pointer px-3.25 py-2.5 font-semibold text-(--text-color) hover:bg-white/30 duration-200"
-                                        onClick={eventsClick}>
-                                        <NavLink to={`/m/${companyId}`}>Просмотр</NavLink>
+                                        onClick={(e) => {
+                                            navigate(`/m/${companyId}`),
+                                            eventsClick(e)
+                                        }
+                                        }>
+                                        Просмотр
                                     </li>
 
                                     <li className="cursor-pointer border-y border-white px-3.25 py-2.5 font-semibold text-(--text-color) hover:bg-white/30 duration-200"
-                                        onClick={eventsClick}>
-                                        <NavLink to={`/u/a-c/${companyId}`}>Редактирование</NavLink>
+                                        onClick={(e) => {
+                                            navigate(`/u/c-f/${companyId}`),
+                                            eventsClick(e)
+                                        }
+                                        }>
+                                        Редактировать
                                     </li>
 
                                     <li className="cursor-pointer px-3.25 py-2.5 font-semibold text-(--text-color) hover:bg-white/30 duration-200"
@@ -173,7 +181,7 @@ const CompanyCard = ({
                     </div>
                 )}
             </div>
-        </NavLink>
+        </Link>
     )
 }
 
