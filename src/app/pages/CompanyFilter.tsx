@@ -19,13 +19,16 @@ const CompanyFilter = () => {
     city_ids: [],
     is_favorite: false
   });
-
   const [showAllFilter, setShowAllFilter] = useState({
     companyCategory: false,
     companyTag: false,
     city: false,
     region: false
   });
+  const [categorySearch, setCategorySearch] = useState('');
+  const [tagSearch, setTagSearch] = useState('');
+  const [regionSearch, setRegionSearch] = useState('');
+  const [citySearch, setCitySearch] = useState('');
 
   useEffect(() => {
     const categoryIds = searchParams.get('category_ids')?.split(',').map(Number) || [];
@@ -73,6 +76,11 @@ const CompanyFilter = () => {
     queryFn: getCities,
     staleTime
   });
+
+  const categoryFilteredOptions = categories?.data.filter(category => category.name.toLowerCase().includes(categorySearch.toLowerCase())) || [];
+  const tagFilteredOptions = tags?.data.filter(tag => tag.name.toLowerCase().includes(tagSearch.toLowerCase())) || [];
+  const regionFilteredOptions = regions?.data.filter(region => region.name.toLowerCase().includes(regionSearch.toLowerCase())) || [];
+  const cityFilteredOptions = cities?.data.filter(city => city.name.toLowerCase().includes(citySearch.toLowerCase())) || [];
 
   const loadFilterWithoutLimit = (filterType: 'company_categories' | 'company_tags' | 'regions' | 'cities') => {
     switch (filterType) {
@@ -129,16 +137,16 @@ const CompanyFilter = () => {
             <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'category_ids')} checked={!!categories?.data.length && filterRequest.category_ids.length === categories.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
-                <input type="text" className="max-w-50 h-10! liquid-glass-input" />
+                <input value={categorySearch} onChange={(e) => setCategorySearch(e.target.value)} type="text" className="max-w-50 h-10! liquid-glass-input" />
                 <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
-              {categories?.data.slice(0, showAllFilter.companyCategory ? categories.data.length : 5).map((category) => (
+              {categoryFilteredOptions?.slice(0, showAllFilter.companyCategory ? categoryFilteredOptions.length : 5).map((category) => (
                 <Filter key={category.id} id={category.id} label={category.name} filterRequestType="category_ids" />
               ))}
             </div>
-            {categories?.data && categories.data.length > 5 && (
+            {categoryFilteredOptions && categoryFilteredOptions.length > 5 && (
               <div onClick={() => loadFilterWithoutLimit('company_categories')} className="flex items-center gap-2.5">
                 <span className="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{showAllFilter.companyCategory ? 'Скрыть' : 'Показать все'}</span>
               </div>
@@ -151,16 +159,16 @@ const CompanyFilter = () => {
             <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'tag_ids')} checked={!!tags?.data.length && filterRequest.tag_ids.length === tags.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
-                <input type="text" className="max-w-50 h-10! liquid-glass-input" />
+                <input value={tagSearch} onChange={(e) => setTagSearch(e.target.value)} type="text" className="max-w-50 h-10! liquid-glass-input" />
                 <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
-              {tags?.data.slice(0, showAllFilter.companyTag ? tags.data.length : 5).map((tag) => (
+              {tagFilteredOptions.slice(0, showAllFilter.companyTag ? tagFilteredOptions.length : 5).map((tag) => (
                 <Filter key={tag.id} id={tag.id} label={tag.name} filterRequestType="tag_ids" />
               ))}
             </div>
-            {tags?.data && tags.data.length > 5 && (
+            {tagFilteredOptions && tagFilteredOptions.length > 5 && (
               <div onClick={() => loadFilterWithoutLimit('company_tags')} className="flex items-center gap-2.5">
                 <span className="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{showAllFilter.companyTag ? 'Скрыть' : 'Показать все'}</span>
               </div>
@@ -173,16 +181,16 @@ const CompanyFilter = () => {
             <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'region_ids')} checked={!!regions?.data.length && filterRequest.region_ids.length === regions.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
-                <input type="text" className="max-w-50 h-10! liquid-glass-input" />
+                <input value={regionSearch} onChange={(e) => setRegionSearch(e.target.value)} type="text" className="max-w-50 h-10! liquid-glass-input" />
                 <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
-              {regions?.data.slice(0, showAllFilter.region ? regions.data.length : 5).map((rgn) => (
+              {regionFilteredOptions.slice(0, showAllFilter.region ? regionFilteredOptions.length : 5).map((rgn) => (
                 <Filter key={rgn.id} id={rgn.id} label={rgn.name} filterRequestType="region_ids" />
               ))}
             </div>
-            {regions?.data && regions.data.length > 5 && (
+            {regionFilteredOptions && regionFilteredOptions.length > 5 && (
               <div onClick={() => loadFilterWithoutLimit('regions')} className="flex items-center gap-2.5">
                 <span className="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{showAllFilter.region ? 'Скрыть' : 'Показать все'}</span>
               </div>
@@ -195,16 +203,16 @@ const CompanyFilter = () => {
             <li className="flex items-center gap-4.25 px-2">
               <input onChange={(event) => toggleSelectAll(event, 'city_ids')} checked={!!cities?.data.length && filterRequest.city_ids.length === cities.data.length} type="checkbox" className="custom-checkbox" />
               <div className="relative max-w-50 w-full">
-                <input type="text" className="max-w-50 h-10! liquid-glass-input" />
+                <input value={citySearch} onChange={(e) => setCitySearch(e.target.value)} type="text" className="max-w-50 h-10! liquid-glass-input" />
                 <i className="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
               </div>
             </li>
             <div className="max-h-70 overflow-auto">
-              {cities?.data.slice(0, showAllFilter.city ? cities.data.length : 5).map((city) => (
+              {cityFilteredOptions.slice(0, showAllFilter.city ? cityFilteredOptions.length : 5).map((city) => (
                 <Filter key={city.id} id={city.id} label={city.name} filterRequestType="city_ids" />
               ))}
             </div>
-            {cities?.data && cities.data.length > 5 && (
+            {cityFilteredOptions && cityFilteredOptions.length > 5 && (
               <div onClick={() => loadFilterWithoutLimit('cities')} className="flex items-center gap-2.5">
                 <span className="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{showAllFilter.city ? 'Скрыть' : 'Показать все'}</span>
               </div>
