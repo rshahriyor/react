@@ -1,18 +1,85 @@
+import { useEffect, useRef, useState } from "react";
 import Logo from "../assets/header-logo.svg";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { searchCompanies } from "../core/services/company.service";
+import type { ICompany } from "../core/models/company.model";
+import { useClickOutside } from "../core/hooks/click-outside";
+
+interface IFilterMenuProps {
+    companies: ICompany[];
+    onSelect: () => void;
+}
+
+const FilterMenu = ({ companies, onSelect }: IFilterMenuProps) => {
+    return (
+        <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-2xl z-10 overflow-auto">
+            <div className="gap-3.75 pl-4.5 flex items-center py-2">
+                <i className="pi pi-building text-(--text-color)"></i>
+                <span className="text-(--text-color) font-bold text-[18px]">Предприятия</span>
+            </div>
+            <ul>
+                {companies.map((company) => (
+                    <Link onClick={onSelect} to={`/m/${company.id}`} key={company.id}>
+                        <li className="px-4.5 py-2 hover:bg-gray-100 cursor-pointer duration-200 text-[17px] text-(--text-color) font-medium">
+                            {company.name}
+                        </li>
+                    </Link>
+                ))}
+            </ul>
+        </div>
+    )
+}
 
 const Header = () => {
     const token = localStorage.getItem('token');
+    const [search, setSearch] = useState('');
+    const [menuVisible, setMenuVisible] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const { data: companies } = useQuery({
+        queryKey: ['companies', search],
+        queryFn: () => searchCompanies(search),
+        enabled: search.length > 0,
+    });
+
+    useEffect(() => {
+        if (!searchValue.length) {
+            setSearch('');
+            setMenuVisible(false);
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setSearch(searchValue);
+            setMenuVisible(true);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchValue]);
+
+    useClickOutside((containerRef), () => {
+        setMenuVisible(false);
+    })
+
+    const onFocus = () => {
+        if (searchValue.length > 0) {
+            setMenuVisible(true);
+        }
+    }
+
     return (
         <header className="container max-w-295 mx-auto">
             <div className="flex items-center justify-between gap-5 pt-5">
                 <Link to='/' className="logo max-w-70 w-full cursor-pointer">
                     <img src={Logo} alt="logo" />
                 </Link>
-                <div className="max-w-145 w-full relative">
-                    <input type="text" placeholder="Поиск"
+                <div ref={containerRef} className="max-w-145 w-full relative">
+                    <input onFocus={onFocus} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} type="text" placeholder="Поиск"
                         className="liquid-glass-input" />
                     <i className="pi pi-search absolute right-3 top-1/2 transform -translate-y-1/2 text-(--text-color)"></i>
+                    {menuVisible && <FilterMenu companies={companies?.data || []} onSelect={() => setMenuVisible(false)} />}
                 </div>
                 <div className="profile max-w-70 w-full flex justify-center gap-3">
                     <Link to={token ? '/u' : '/login'} className="flex flex-col items-center gap-px cursor-pointer">

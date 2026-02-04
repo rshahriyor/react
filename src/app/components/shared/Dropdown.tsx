@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useClickOutside } from '../../core/hooks/click-outside';
 
 export type DropdownOption = {
     name: string;
@@ -42,20 +43,9 @@ const Dropdown = ({
             .includes(search.toLowerCase())
     );
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                containerRef.current &&
-                !containerRef.current.contains(e.target as Node)
-            ) {
-                setMenuVisible(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () =>
-            document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    useClickOutside(containerRef, () => {
+        setMenuVisible(false);
+    });
 
     return (
         <div className="relative" ref={containerRef}>
@@ -65,7 +55,7 @@ const Dropdown = ({
                     {selectedOption?.[optionLabel] ?? ''}
                 </span>
 
-                <i className={`pi pi-angle-down text-2xl absolute right-2.5 duration-300 ${menuVisible ? 'rotate-180' : ''}`}/>
+                <i className={`pi pi-angle-down text-2xl absolute right-2.5 duration-300 ${menuVisible ? 'rotate-180' : ''}`} />
             </div>
 
             {menuVisible && (
