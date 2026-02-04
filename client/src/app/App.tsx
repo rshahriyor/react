@@ -8,7 +8,7 @@ import CompanyForm from "./pages/user/CompanyForm";
 import Profile from "./pages/user/Profile";
 import User from "./pages/user/User";
 import Login from "./pages/Login";
-import ProtectedRoute from "./core/routes/ProtectedRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import { AuthProvider } from "./core/contexts/AuthContext";
 
 const router = createBrowserRouter(
