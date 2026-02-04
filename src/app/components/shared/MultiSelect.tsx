@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useClickOutside } from '../../core/hooks/click-outside';
 
 export type MultiSelectOption = {
     name: string;
@@ -48,20 +49,9 @@ const MultiSelect = ({
         }
     };
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                containerRef.current &&
-                !containerRef.current.contains(e.target as Node)
-            ) {
-                setMenuVisible(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () =>
-            document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    useClickOutside((containerRef), () => {
+        setMenuVisible(false);
+    })
 
     return (
         <div className="relative" ref={containerRef}>

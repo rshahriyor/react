@@ -57,16 +57,22 @@ export function putCompany(companyId: number, company: ICompanyForm): Promise<IR
     })
 }
 
-export function toggleCompanyFavorite(companyId: number, body: {}): Promise<IResponse<{message: string}>> {
-    return api.request<IResponse<{message: string}>>(`companies/toggle_favorite/${companyId}`, {
+export function toggleCompanyFavorite(companyId: number, body: {}): Promise<IResponse<{ message: string }>> {
+    return api.request<IResponse<{ message: string }>>(`companies/toggle_favorite/${companyId}`, {
         method: 'POST',
         body: body
     });
 }
 
-export function toggleCompanyStatus(companyId: number, body: {is_active: boolean}): Promise<IResponse<{message: string}>> {
-    return api.request<IResponse<{message: string}>>(`companies/${companyId}/status`, {
+export function toggleCompanyStatus(companyId: number, body: { is_active: boolean }): Promise<IResponse<{ message: string }>> {
+    return api.request<IResponse<{ message: string }>>(`companies/${companyId}/status`, {
         method: 'POST',
         body: body
+    });
+}
+
+export function searchCompanies(q: string): Promise<IResponse<ICompany[]>> {
+    return api.request<IResponse<ICompany[]>>('companies/search', {
+        queryParams: q ? { q } : {}
     });
 }
