@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { searchCompanies } from "../core/services/company.service";
 import type { ICompany } from "../core/models/company.model";
-import { useClickOutside } from "../core/hooks/click-outside";
+import { useClickOutside } from "../core/hooks/useClickOutside";
 
 interface IFilterMenuProps {
     companies: ICompany[];
@@ -32,7 +32,6 @@ const FilterMenu = ({ companies, onSelect }: IFilterMenuProps) => {
 }
 
 const Header = () => {
-    const token = localStorage.getItem('token');
     const [search, setSearch] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
     const [searchValue, setSearchValue] = useState('');
@@ -82,7 +81,7 @@ const Header = () => {
                     {menuVisible && <FilterMenu companies={companies?.data || []} onSelect={() => setMenuVisible(false)} />}
                 </div>
                 <div className="profile max-w-70 w-full flex justify-center gap-3">
-                    <Link to={token ? '/u' : '/login'} className="flex flex-col items-center gap-px cursor-pointer">
+                    <Link to='/u/m-c' className="flex flex-col items-center gap-px cursor-pointer">
                         <i className="pi pi-user text-(--text-color) text-2xl"></i>
                         <span className="text-(--text-color) text-sm">Аккаунт</span>
                     </Link>

@@ -8,6 +8,8 @@ import CompanyForm from "./pages/user/CompanyForm";
 import Profile from "./pages/user/Profile";
 import User from "./pages/user/User";
 import Login from "./pages/Login";
+import ProtectedRoute from "./core/routes/ProtectedRoute";
+import { AuthProvider } from "./core/contexts/AuthContext";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,12 +18,14 @@ const router = createBrowserRouter(
         <Route index element={<Home />}></Route>
         <Route path="m/:id" element={<CompanyDetail />}></Route>
         <Route path="m-i" element={<CompanyFilter />}></Route>
-        <Route path="u" element={<User />}>
-          <Route index element={<Navigate to="m-c" replace />} />
-          <Route path="m-c" element={<MyCompanies />} />
-          <Route path="p" element={<Profile />} />
-          <Route path="c-f" element={<CompanyForm />} />
-          <Route path="c-f/:id" element={<CompanyForm />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="u" element={<User />}>
+            <Route index element={<Navigate to="m-c" replace />} />
+            <Route path="m-c" element={<MyCompanies />} />
+            <Route path="p" element={<Profile />} />
+            <Route path="c-f" element={<CompanyForm />} />
+            <Route path="c-f/:id" element={<CompanyForm />} />
+          </Route>
         </Route>
       </Route>
       <Route path="/login" element={<Login />}></Route>
@@ -32,7 +36,9 @@ const router = createBrowserRouter(
 const App = () => {
   return (
     <>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </>
   )
 }
