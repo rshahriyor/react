@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../core/hooks/useAuth";
 
 const schema = z.object({
   username: z.string().min(4, 'Логин должен содержать минимум 4 символа'),
@@ -17,6 +18,7 @@ type LoginForm = z.infer<typeof schema>;
 const Login = () => {
   const [isWrongCredentials, setIsWrongCredentials] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
   
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(schema),
@@ -29,6 +31,7 @@ const Login = () => {
         setIsWrongCredentials(true);
       } else if (response.status.code === 0) {
         localStorage.setItem('token', response.data.token);
+        login(response.data.token);
         setIsWrongCredentials(false);
         navigate('/u/m-c');
       }

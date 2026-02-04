@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useClickOutside } from '../../core/hooks/click-outside';
+import { useClickOutside } from '../../core/hooks/useClickOutside';
 
 export type MultiSelectOption = {
     name: string;
