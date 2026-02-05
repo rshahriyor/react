@@ -1,0 +1,17 @@
+# ===== CLIENT (React) =====
+client/node_modules/
+client/build/
+client/dist/
+client/.env
+client/.env.local
+
+# ===== SERVER (Node) =====
+server/node_modules/
+server/dist/
+server/.env
+
+# ===== COMMON =====
+*.log
+.DS_Store
+.vscode/
+.idea/
