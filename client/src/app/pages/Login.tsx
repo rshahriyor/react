@@ -30,7 +30,6 @@ const Login = () => {
       if (response.status.code === -3) {
         setIsWrongCredentials(true);
       } else if (response.status.code === 0) {
-        localStorage.setItem('token', response.data.token);
         login(response.data.token);
         setIsWrongCredentials(false);
         navigate('/u/m-c');
