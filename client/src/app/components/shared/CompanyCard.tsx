@@ -5,9 +5,9 @@ import { environment } from '../../../environments/environment';
 import type { ISchedule } from '../../core/models/schedule.model';
 import { useMutation } from '@tanstack/react-query';
 import { toggleCompanyFavorite, toggleCompanyStatus } from '../../core/services/company.service';
+import { useAuth } from '../../core/hooks/useAuth';
 
 const imageUrl = environment.imageUrl;
-const token = localStorage.getItem('token');
 
 interface CompanyCardProps {
     companyId: number;
@@ -40,6 +40,7 @@ const CompanyCard = ({
     const [favoritesCountState, setFavoritesCountState] = useState(favoritesCount);
     const [companyStatusState, setCompanyStatusState] = useState(companyStatus);
     const navigate = useNavigate();
+    const { token } = useAuth();
 
     useEffect(() => {
         calculateWorkingDay();
@@ -192,7 +193,7 @@ const CompanyCard = ({
 
                     <div className={`flex flex-wrap gap-1.5 overflow-hidden ${companyTitle.length <= 15 ? 'max-h-14' : 'max-h-6.25'}`}>
                         {companyTags.map((tag, index) => (
-                            <div key={index} className="flex max-h-6.25 items-center justify-center rounded-xl bg-[#F0F0F0CC]
+                            <div key={index} className="flex max-h-6.25 items-center justify-center rounded-xl bg-(--body-bg-color)
                                                         px-2.5 py-1.25 text-[13px]">
                                 <span className="line-clamp-1">{tag.tag_name}</span>
                             </div>
