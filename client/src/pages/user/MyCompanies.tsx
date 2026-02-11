@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import type { ICompany } from "../../core/models/company.model";
 import type { IResponse } from "../../core/models/response.model";
 import { getMyCompanies } from "../../core/services/company.service";
-import CompanyCard from "../../components/shared/CompanyCard";
+import CompanyCard from "../../shared/ui/CompanyCard";
 
 const MyCompanies = () => {
   const { data: companies } = useQuery<IResponse<ICompany[]>>({

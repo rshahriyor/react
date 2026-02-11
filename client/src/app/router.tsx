@@ -1,0 +1,33 @@
+import { createBrowserRouter, createRoutesFromElements, Route, Navigate } from "react-router-dom";
+import MainLayout from "../layouts/MainLayout";
+import CompanyDetail from "../pages/CompanyDetail";
+import CompanyFilter from "../pages/CompanyFilter";
+import Home from "../pages/Home";
+import Login from "../pages/Login";
+import CompanyForm from "../pages/user/CompanyForm";
+import MyCompanies from "../pages/user/MyCompanies";
+import Profile from "../pages/user/Profile";
+import User from "../pages/user/User";
+import ProtectedRoute from "./ProtectedRoute";
+
+export const router = createBrowserRouter(
+    createRoutesFromElements(
+        <>
+            <Route path="/" element={<MainLayout />}>
+                <Route index element={<Home />}></Route>
+                <Route path="m/:id" element={<CompanyDetail />}></Route>
+                <Route path="m-i" element={<CompanyFilter />}></Route>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="u" element={<User />}>
+                        <Route index element={<Navigate to="m-c" replace />} />
+                        <Route path="m-c" element={<MyCompanies />} />
+                        <Route path="p" element={<Profile />} />
+                        <Route path="c-f" element={<CompanyForm />} />
+                        <Route path="c-f/:id" element={<CompanyForm />} />
+                    </Route>
+                </Route>
+            </Route>
+            <Route path="/login" element={<Login />}></Route>
+        </>
+    )
+);

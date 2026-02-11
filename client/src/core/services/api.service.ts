@@ -1,4 +1,4 @@
-import { environment } from '../../../environments/environment';
+import { environment } from "../../env/environment";
 
 // Utility function to build query string from params
 function buildQueryString(params?: Record<string, unknown>): string {

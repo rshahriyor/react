@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import Logo from "../assets/header-logo.svg";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { searchCompanies } from "../core/services/company.service";
-import type { ICompany } from "../core/models/company.model";
 import { useClickOutside } from "../core/hooks/useClickOutside";
+import type { ICompany } from "../core/models/company.model";
+import { searchCompanies } from "../core/services/company.service";
+import Logo from '../shared/assets/header-logo.svg'
 
 interface IFilterMenuProps {
     companies: ICompany[];
