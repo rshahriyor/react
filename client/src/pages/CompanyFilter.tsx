@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import Filter from "../components/shared/Filter"
+import Filter from "../shared/ui/Filter"
 import { useEffect, useState, type ChangeEvent } from "react"
 import type { IResponse } from "../core/models/response.model";
 import { getCategories, getCities, getRegions, getTags } from "../core/services/dictionary.service";
 import type { IFilterRequest } from "../core/models/filter.model";
 import type { ICompany } from "../core/models/company.model";
 import { getCompaniesByFilter } from "../core/services/company.service";
-import CompanyCard from "../components/shared/CompanyCard";
+import CompanyCard from "../shared/ui/CompanyCard";
 import { useSearchParams } from "react-router-dom";
 
 const CompanyFilter = () => {

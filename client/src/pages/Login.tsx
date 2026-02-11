@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import Logo from "../assets/footer-logo.svg"
+import Logo from "../shared/assets/footer-logo.svg"
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { login as loginform } from "../core/services/login.service";
 import { useState } from "react";

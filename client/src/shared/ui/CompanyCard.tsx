@@ -1,11 +1,11 @@
 import { useEffect, useState, type MouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import type { IFile } from '../../core/models/company.model';
-import { environment } from '../../../environments/environment';
-import type { ISchedule } from '../../core/models/schedule.model';
+import { environment } from '../../env/environment';
 import { useMutation } from '@tanstack/react-query';
-import { toggleCompanyFavorite, toggleCompanyStatus } from '../../core/services/company.service';
 import { useAuth } from '../../core/hooks/useAuth';
+import type { IFile } from '../../core/models/company.model';
+import type { ISchedule } from '../../core/models/schedule.model';
+import { toggleCompanyFavorite, toggleCompanyStatus } from '../../core/services/company.service';
 
 const imageUrl = environment.imageUrl;
 

@@ -1,19 +1,19 @@
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
-import Dropdown from "../../components/shared/Dropdown";
+import Dropdown from "../../shared/ui/Dropdown";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getCategories, getCities, getRegions, getTagsByCategory } from "../../core/services/dictionary.service";
-import { WEEK_DAYS } from "../../core/utils/constants";
-import { getTimeSlots } from "../../core/utils/helper";
 import type { ICompanyForm } from "../../core/models/company-form.model";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ISchedule } from "../../core/models/schedule.model";
 import { useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../core/services/files.service";
-import MultiSelect from "../../components/shared/MultiSelect";
+import MultiSelect from "../../shared/ui/MultiSelect";
 import { getCompany, postCompany, putCompany } from "../../core/services/company.service";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { environment } from "../../../environments/environment";
+import { environment } from "../../env/environment";
+import { WEEK_DAYS } from "../../shared/utils/constants";
+import { getTimeSlots } from "../../shared/utils/helper";
 
 
 const imageUrl = environment.imageUrl;

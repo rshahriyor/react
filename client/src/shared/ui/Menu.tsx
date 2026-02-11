@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getCategories } from "../../core/services/dictionary.service";
-import type { IResponse } from "../../core/models/response.model";
 import { NavLink } from "react-router-dom";
+import type { IResponse } from "../../core/models/response.model";
+import { getCategories } from "../../core/services/dictionary.service";
 
 const Menu = ({ currentPage }: {currentPage: string}) => {
   const { data: categories } = useQuery<IResponse<{ id: number, name: string, icon: string }[]>>({

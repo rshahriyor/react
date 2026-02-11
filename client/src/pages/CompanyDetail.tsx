@@ -1,15 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getCompany } from "../core/services/company.service";
-import Menu from "../components/shared/Menu";
-import { environment } from "../../environments/environment";
-import Map from "../assets/map.svg";
+import Menu from "../shared/ui/Menu";
+import { environment } from "../env/environment";
+import Map from "../shared/assets/map.svg";
 import { formatPhone } from "../core/pipes/formatPhone";
 import { dayOfWeek } from "../core/pipes/day-of-week";
-import Instagram from "../assets/social/instagram.svg";
-import Telegram from "../assets/social/telegram.svg";
-import Facebook from "../assets/social/facebook.svg";
-import WhatsApp from "../assets/social/whatsapp.svg";
+import Instagram from "../shared/assets/social/instagram.svg";
+import Telegram from "../shared/assets/social/telegram.svg";
+import Facebook from "../shared/assets/social/facebook.svg";
+import WhatsApp from "../shared/assets/social/whatsapp.svg";
 import { useMemo, useState } from "react";
 import type { WheelEvent } from "react";
 

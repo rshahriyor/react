@@ -1,4 +1,4 @@
-import type { DropdownOption } from "../../components/shared/Dropdown";
+import type { DropdownOption } from "../ui/Dropdown";
 import { DAYS_OFF_STATUS } from "./constants";
 
 export function getTimeSlots(daysOff: boolean = false): DropdownOption[] {
