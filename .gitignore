@@ -2,8 +2,7 @@
 client/node_modules/
 client/build/
 client/dist/
-client/.env
-client/.env.local
+client/env
 
 # ===== SERVER (Node) =====
 server/node_modules/
